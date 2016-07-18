@@ -1,5 +1,5 @@
 ﻿''' <summary>
-''' This is a helper class to convert from frequency to musical note and viceversa.
+''' This is a helper class to convert from frequency values to musical notes and viceversa.
 ''' The note notation is as follows:
 ''' NOTE SHARP OCTAVE
 ''' Examples:
