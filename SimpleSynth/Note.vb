@@ -13,6 +13,7 @@
 ''' </list> 
 ''' </summary>
 Public Class Note
+    ' FIXME: This whole code is horrendous!
     Private mFrequency As Double
     Private mValue As String
 
@@ -103,24 +104,23 @@ Public Class Note
         If n.Value = "" Then Return n
         Dim notes() = {"C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#", "A ", "A#", "B ", "C "}
         Dim newNote As String = n.Value
+        Dim s As Integer = If(i > 0, -1, 1)
+
+        If s = 1 Then notes = notes.Reverse().ToArray()
 
         While i <> 0
             For j As Integer = 0 To notes.Length - 1
                 If notes(j) = newNote.Substring(0, 2) Then
                     j += 1
                     If notes(j) = notes.Last() Then
-                        newNote = $"{notes(j)}{Integer.Parse(newNote(2)) + 1}"
+                        newNote = $"{notes(j)}{Integer.Parse(newNote(2)) + (-s)}"
                     Else
                         newNote = $"{notes(j)}{Integer.Parse(newNote(2))}"
                     End If
                     Exit For
                 End If
             Next
-            If i > 0 Then
-                i -= 1
-            Else
-                i += 1
-            End If
+            i += s
         End While
 
         Return newNote

@@ -171,8 +171,8 @@ Public Class FormMain
         sg = New SignalGenerator()
         sg.WaveForm = Oscillator.WaveForms.Noise
         sg.Envelop.Sustain = New Envelope.EnvelopePoint(1, 500)
-        sg.Envelop.Release = New Envelope.EnvelopePoint(0, 300)
-        sg.Volume = 0.02
+        sg.Envelop.Release = New Envelope.EnvelopePoint(0, 400)
+        sg.Volume = 0.04
         m.SignalGenerators.Add(sg)
         Return m
     End Function
