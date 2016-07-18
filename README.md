@@ -9,3 +9,4 @@ So far, the library supports:
 - Supports triggering multiple tone/signal generators at once (SignalMixer)
 
 Note that for audio playback, it requires [SlimDX](https://slimdx.org/).
+Formulas evalution is done using the [NCalc](https://ncalc.codeplex.com/) library.
