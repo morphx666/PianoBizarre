@@ -165,6 +165,7 @@ Public Class FormMain
         sg.Envelop.Sustain = New Envelope.EnvelopePoint(1, 800)
         sg.Envelop.Release = New Envelope.EnvelopePoint(0, 600)
         sg.Volume = 0.3
+        sg.NoteShiftOffset -= 12
         m.SignalGenerators.Add(sg)
 
         sg = New SignalGenerator()

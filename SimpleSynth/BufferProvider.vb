@@ -10,6 +10,8 @@ Public MustInherit Class BufferProvider
     Private mOscillator As Oscillator = New Oscillator()
     Private mVolume As Double = 1.0
     Private mEnvelop As Envelope = New Envelope()
+    Private mNote As New Note()
+    Private mNoteShiftOffset As Integer = 0
 
     Protected Friend MustOverride Sub FillAudioBuffer(audioBuffer() As Integer, isFirst As Boolean) Implements IBufferProvider.FillAudioBuffer
 
@@ -27,6 +29,15 @@ Public MustInherit Class BufferProvider
     Public Overridable Sub Close() Implements IBufferProvider.Close
         mEnvelop.Dispose()
     End Sub
+
+    Public Property NoteShiftOffset As Integer Implements IBufferProvider.NoteShiftOffset
+        Get
+            Return mNoteShiftOffset
+        End Get
+        Set(value As Integer)
+            mNoteShiftOffset = value
+        End Set
+    End Property
 
     ''' <summary>
     ''' Gets the <see cref="Oscillator"/> attached to this buffer provider 
@@ -71,33 +82,35 @@ Public MustInherit Class BufferProvider
     <RangeAttribute(0.0, Double.MaxValue)>
     Public Overridable Property Frequency As Double Implements IBufferProvider.Frequency
         Get
-            Return mOscillator.Frequency
+            Return mNote.Frequency
         End Get
         Set(value As Double)
-            If value = 0 Then
+            mNote.Frequency = value
+
+            If mNote.Frequency = 0 Then
                 If mEnvelop.EnvelopStep = Envelope.EnvelopeSteps.Idle Then
-                    mOscillator.Frequency = value
+                    mOscillator.Frequency = mNote.Frequency
                 Else
                     mEnvelop.Stop()
                 End If
             Else
                 mEnvelop.Start()
-                mOscillator.Frequency = value
+                mOscillator.Frequency = (mNote + mNoteShiftOffset).Frequency
             End If
         End Set
     End Property
 
-    ' https://en.wikipedia.org/wiki/Piano_key_frequencies
     ''' <summary>
     ''' Gets or sets the musical note representation of the <see cref="Oscillator"/>'s <see cref="Frequency"/>.  
     ''' </summary>
     ''' <returns><see cref="IBufferProvider.Note"/></returns>
-    Public Overridable Property Note As String Implements IBufferProvider.Note
+    Public Overridable Property Note As Note Implements IBufferProvider.Note
         Get
-            Return SimpleSynth.Note.FrequencyToNote(Frequency)
+            Return Frequency
         End Get
-        Set(value As String)
-            Frequency = SimpleSynth.Note.NoteToFrequency(value)
+        Set(value As Note)
+            mNote = value
+            Frequency = mNote.Frequency
         End Set
     End Property
 End Class

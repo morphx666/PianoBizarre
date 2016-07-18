@@ -35,11 +35,11 @@ Public Class SignalMixer
         End Set
     End Property
 
-    Public Overrides Property Note As String
+    Public Overrides Property Note As Note
         Get
             Return MyBase.Note
         End Get
-        Set(value As String)
+        Set(value As Note)
             MyBase.Note = value
         End Set
     End Property
