@@ -13,6 +13,31 @@
 ''' </list> 
 ''' </summary>
 Public Class Note
+    Public Property Value As String
+
+    Public Sub New(value As String)
+        Me.Value = value
+    End Sub
+
+    Public Sub New(frequency As Double)
+        Me.Value = FrequencyToNote(frequency)
+    End Sub
+
+    Public Property Frequency As Double
+        Get
+            Return NoteToFrequency(Value)
+        End Get
+        Set(value As Double)
+            Me.Value = FrequencyToNote(value)
+        End Set
+    End Property
+
+    Public ReadOnly Property IsSharp As Boolean
+        Get
+            Return Value(1) = "#"
+        End Get
+    End Property
+
     Public Shared Function NoteToFrequency(note As String) As Double
         Dim ns As String = note(0)
         Dim ss As String = note(1)
@@ -36,4 +61,42 @@ Public Class Note
 
         Return $"{ns}{ss}{no}"
     End Function
+
+    Public Shared Narrowing Operator CType(n As Note) As String
+        Return n.Value
+    End Operator
+
+    Public Shared Narrowing Operator CType(n As Note) As Double
+        Return n.Frequency
+    End Operator
+
+    Public Shared Widening Operator CType(n As String) As Note
+        Return New Note(n)
+    End Operator
+
+    Public Shared Widening Operator CType(n As Double) As Note
+        Return New Note(n)
+    End Operator
+
+    Public Shared Operator +(n As Note, i As Integer) As Note
+        Dim notes() = {"C ", "C#", "D ", "D#", "E ", "F ", "F#", "G ", "G#", "A ", "A#", "B ", "C "}
+        Dim newNote As String = ""
+
+        While i > 0
+            For j As Integer = 0 To notes.Length - 1
+                If notes(j) = n.Value.Substring(0, 2) Then
+                    newNote = notes(j + 1)
+                    If newNote = notes.Last() Then
+                        newNote = $"{newNote}{Integer.Parse(n.Value(2)) + 1}"
+                    Else
+                        newNote = $"{newNote}{Integer.Parse(n.Value(2))}"
+                    End If
+                    Exit For
+                End If
+            Next
+            i = -1
+        End While
+
+        Return newNote
+    End Operator
 End Class

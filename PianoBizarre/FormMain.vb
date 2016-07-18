@@ -6,7 +6,14 @@ Public Class FormMain
     Private abortThreads As Boolean
     Private am As AudioMixer
 
+    Private Enum WaveFormRendererModes
+        Line
+        Blobs
+    End Enum
+
     Private largeFont As New Font("Consolas", 13, FontStyle.Bold)
+    Private waveFormRendererMode As WaveFormRendererModes = WaveFormRendererModes.Line
+    Private keyboardKeys As New List(Of KeyRenderer)
 
     Private Sub FormMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         abortThreads = True
@@ -19,11 +26,17 @@ Public Class FormMain
         Me.SetStyle(ControlStyles.ResizeRedraw, True)
         Me.SetStyle(ControlStyles.UserPaint, True)
 
+        InitKeyboardUI()
+
         am = New AudioMixer()
-        ' 'n' note polyphony
-        For i As Integer = 1 To 6
+        For i As Integer = 1 To 6 ' note polyphony
+            ' Simple sinusoidal oscillator
             'am.BufferProviders.Add(CreateInstrument1())
+
+            ' Multiple oscillators (SignalMixer)
             am.BufferProviders.Add(CreateInstrument2())
+
+            ' Custom formula
             'am.BufferProviders.Add(CreateInstrument3())
         Next
         am.Volume = 0.8
@@ -63,6 +76,36 @@ Public Class FormMain
                                        Loop Until abortThreads
                                    End Sub)
         refreshThread.Start()
+    End Sub
+
+    Private Sub InitKeyboardUI()
+        Dim padding As Integer = 1
+        Dim whitesSize As New Size(40, 180)
+        Dim blacksSize As New Size(whitesSize.Width * 0.8, whitesSize.Height / 2)
+
+        Dim p As New Point(0, 0)
+
+        Dim n As New Note("C 4")
+        For i As Integer = 0 To 17 - 1
+            If Not n.IsSharp Then
+                keyboardKeys.Add(New KeyRenderer(n, New Rectangle(p, whitesSize)))
+                p.X += whitesSize.Width
+            End If
+            p.X += padding
+            n += 1
+        Next
+
+        p.X = 0
+        n = "C 4"
+        For i As Integer = 0 To 17 - 1
+            If n.IsSharp Then
+                keyboardKeys.Add(New KeyRenderer(n, New Rectangle(New Point(p.X - blacksSize.Width / 2, p.Y), blacksSize)))
+            Else
+                p.X += whitesSize.Width
+            End If
+            p.X += padding
+            n += 1
+        Next
     End Sub
 
     ''' <summary>
@@ -178,12 +221,17 @@ Public Class FormMain
         'r.Height -= 1
 
         g.Clear(Color.FromArgb(&HFF, &H13, &H2F, &H30))
-        g.InterpolationMode = Drawing2D.InterpolationMode.NearestNeighbor
-        g.SmoothingMode = Drawing2D.SmoothingMode.HighQuality
-        g.PixelOffsetMode = Drawing2D.PixelOffsetMode.HighQuality
+
+        keyboardKeys.ForEach(Sub(k)
+                                 k.State = If(am.BufferProviders.Any(Function(bp) bp.Frequency = k.Note.Frequency),
+                                                        KeyRenderer.KeyStates.Pushed,
+                                                        KeyRenderer.KeyStates.Released)
+                                 k.Render(g)
+                             End Sub)
 
         Dim h As Integer = r.Height * 0.9
         Dim y As Integer = (r.Height - h) / 2
+        Dim x As Integer
 
         Dim bufLen As Integer = am.AudioBuffer.Length
         Dim buf(bufLen - 1) As Integer
@@ -192,44 +240,46 @@ Public Class FormMain
             Array.Copy(am.AudioBuffer, buf, bufLen)
         End SyncLock
 
-        Dim x As Integer
-        Dim p(bufLen - 1) As Point
-        For i As Integer = 0 To bufLen - 1
-            x = i / bufLen * r.Width
-            p(i) = New Point(x, (32768 - buf(i) * am.Volume) / 65536 * h + y)
-        Next
-        Using pc As New Pen(Color.Black, 5)
-            g.DrawLines(pc, p)
-        End Using
-        Using pc As New Pen(Color.FromArgb(&HFF, &H7, &HD8, &HDB), 3)
-            g.DrawLines(pc, p)
-        End Using
-        Using pc As New Pen(Color.FromArgb(&HE0, &H7 + 30, &HD8 + 30, &HDB + 30), 1.5)
-            g.DrawLines(pc, p)
-        End Using
+        Select Case waveFormRendererMode
+            Case WaveFormRendererModes.Line
+                Dim p(bufLen - 1) As Point
+                For i As Integer = 0 To bufLen - 1
+                    x = i / bufLen * r.Width
+                    p(i) = New Point(x, (32768 - buf(i) * am.Volume) / 65536 * h + y)
+                Next
+                Using pc As New Pen(Color.Black, 5)
+                    g.DrawLines(pc, p)
+                End Using
+                Using pc As New Pen(Color.FromArgb(&HFF, &H7, &HD8, &HDB), 3)
+                    g.DrawLines(pc, p)
+                End Using
+                Using pc As New Pen(Color.FromArgb(&HE0, &H7 + 30, &HD8 + 30, &HDB + 30), 1.5)
+                    g.DrawLines(pc, p)
+                End Using
+            Case WaveFormRendererModes.Blobs
+                Dim l As New Rectangle()
+                Dim m As Integer = h / 2 + y
+                l.Width = 4
+                For i As Integer = 0 To bufLen - 1 Step 4
+                    l.X = i / bufLen * r.Width
+                    l.Y = (32768 - buf(i) * am.Volume) / 65536 * h + y
+                    If buf(i) = 0 Then
+                        l.Height = 2
+                    ElseIf buf(i) < 0 Then
+                        l.Height = Math.Abs(l.Y - m) * 2
+                        l.Y -= l.Height
+                    Else
+                        l.Height = Math.Abs(l.Y - m) * 2
+                    End If
+                    g.FillRectangle(Brushes.DodgerBlue, l)
+                Next
+        End Select
 
-        '' Alternate waveform renderer
-        'Dim l As New Rectangle()
-        'Dim m As Integer = h / 2 + y
-        'l.Width = 4
-        'For i As Integer = 0 To bufLen - 1 Step 4
-        '    l.X = i / bufLen * r.Width
-        '    l.Y = buf(i) / 256 * h + y
-        '    If buf(i) = 128 Then
-        '        l.Height = 2
-        '    ElseIf buf(i) > 128 Then
-        '        l.Height = Math.Abs(l.Y - m) * 2
-        '        l.Y -= l.Height
-        '    Else
-        '        l.Height = Math.Abs(l.Y - m) * 2
-        '    End If
-        '    g.FillRectangle(Brushes.DodgerBlue, l)
-        'Next
-
-        y = 4
+        x = keyboardKeys.Max(Function(k) k.Bounds.Right) + 8
+        y = 8
         For Each bp In am.BufferProviders
             If bp.Frequency <> 0 Then
-                g.DrawString(bp.Note, largeFont, Brushes.OrangeRed, New Point(4, y))
+                g.DrawString(bp.Note, largeFont, Brushes.OrangeRed, New Point(x, y))
                 y += (Me.Font.Height + 4)
             End If
         Next
