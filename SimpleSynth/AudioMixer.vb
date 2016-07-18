@@ -2,6 +2,7 @@ Imports SlimDX.DirectSound
 Imports SlimDX.Multimedia
 Imports System.Runtime.InteropServices
 Imports System.Threading
+Imports System.ComponentModel.DataAnnotations
 
 ''' <summary>
 ''' This is the main component in <see cref="SimpleSynth"/> and it works by evaluating
@@ -44,7 +45,7 @@ Public Class AudioMixer
     End Sub
 
     ''' <summary>
-    ''' 16bit normalized (-32768 to 32767) audio buffer
+    ''' 16bit normalized (<see cref="Short.MinValue"/> to <see cref="Short.MaxValue"/>) audio buffer
     ''' </summary>
     ''' <returns>Array of <see cref="Integer"/>s</returns>
     Public ReadOnly Property AudioBuffer As Integer()
@@ -66,7 +67,8 @@ Public Class AudioMixer
     ''' <summary>
     ''' Gets or sets the attenuation value applied to the combined <see cref="BufferProviders"/> 
     ''' </summary>
-    ''' <returns><see cref="Double"/> </returns>
+    ''' <returns><see cref="Double"/></returns>
+    <RangeAttribute(0.0, 1.0)>
     Public Property Volume As Double
         Get
             Return mVolume
@@ -90,7 +92,15 @@ Public Class AudioMixer
 
             ' Hard clipping
             For i = 0 To mAudioBuffer.Length - 1
-                Array.Copy(BitConverter.GetBytes(CShort(Math.Min(32767, Math.Max(-32768, mAudioBuffer(i) * mVolume)))), 0, mainBuffer, i * 2, 2)
+                Array.Copy(BitConverter.GetBytes(CShort(
+                                                 Math.Min(
+                                                    Short.MaxValue,
+                                                    Math.Max(
+                                                        Short.MinValue,
+                                                        mAudioBuffer(i) * mVolume)))),
+                           0,
+                           mainBuffer,
+                           i * 2, 2)
             Next
 
             WriteAudioBuffer()

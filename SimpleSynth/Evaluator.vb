@@ -44,11 +44,7 @@
 ''' </list> 
 ''' </summary>
 Public Class Evaluator
-    Private Const min As Double = -1.0
-    Private Const max As Double = 1.0
-
     Private mFormula As String
-
     Private mCustomParameters As New Dictionary(Of String, Double)
 
     Private exp As Expression
