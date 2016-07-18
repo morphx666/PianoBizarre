@@ -8,6 +8,6 @@ So far, the library supports:
 - Supports Envelopes (Attack, Decay, Sustain and Release)
 - Supports triggering multiple tone/signal generators at once (SignalMixer)
 
-Note that for audio playback, it requires [SlimDX](https://slimdx.org/).
-
-Evalution of formulas is done using the [NCalc](https://ncalc.codeplex.com/) library.
+Dependencies:
+- Audio playback requires [SlimDX](https://slimdx.org/).
+- Evaluation of custom formulas requires the [NCalc](https://ncalc.codeplex.com/) library.
