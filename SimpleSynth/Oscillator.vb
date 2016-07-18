@@ -20,7 +20,8 @@ Public Class Oscillator
     Private mConstantValue As Double = 0
     Private mCustomFormula As New Evaluator()
 
-    Private Const ToRad As Double = Math.PI / 180
+    Private Const ToRad As Double = Math.PI / 180.0
+    Private Const oscStep As Double = 360.0 / AudioMixer.SampleRate
 
     Private waveLength As Integer
     Private halfWaveLength As Integer
@@ -29,14 +30,11 @@ Public Class Oscillator
     Private rnd As New Random()
 
     Public Sub New()
+        mCustomFormula.CustomParameters.Add("oscillatorOffset", oscillatorOffset)
+        mCustomFormula.CustomParameters.Add("frequency", mFrequency)
+        mCustomFormula.CustomParameters.Add("currentStep", currentStep)
+        mCustomFormula.CustomParameters.Add("waveLength", waveLength)
     End Sub
-
-    'Public Sub New(waveForm As WaveForms, Optional frequency As Double = 0, Optional pulseWidth As Double = 0.5, Optional constantValue As Integer = 0)
-    '    Me.WaveForm = waveForm
-    '    Me.Frequency = frequency
-    '    Me.PulseWidth = pulseWidth
-    '    Me.ConstantValue = constantValue
-    'End Sub
 
     <RangeAttribute(0.0, Double.MaxValue)>
     Public Property Frequency As Double
@@ -103,49 +101,45 @@ Public Class Oscillator
         Get
             Dim v As Integer
 
-            If mWaveForm = WaveForms.Constant Then
-                v = mConstantValue * 32768
-            ElseIf mFrequency = 0 OrElse waveLength = 0 Then
+            If waveLength = 0 Then
                 v = 0
             Else
                 Select Case mWaveForm
+                    Case WaveForms.Constant
+                        v = mConstantValue * Short.MaxValue
+
                     Case WaveForms.Pulse
                         If currentStep <= waveLength * mPulseWidth Then
-                            v = 32767
+                            v = Short.MaxValue
                         Else
-                            v = -32768
+                            v = Short.MinValue
                         End If
 
                     Case WaveForms.Sinusoidal
-                        v = Math.Sin(oscillatorOffset * mFrequency * ToRad) * 32768
+                        v = Math.Sin(oscillatorOffset * mFrequency * ToRad) * Short.MaxValue
 
                     Case WaveForms.Triangular
                         If currentStep <= halfWaveLength Then
-                            v = -32768 + 65535 * (currentStep / halfWaveLength)
+                            v = Short.MinValue + UShort.MaxValue * (currentStep / halfWaveLength)
                         Else
-                            v = 32767 - 65535 * ((currentStep - halfWaveLength) / halfWaveLength)
+                            v = Short.MaxValue - UShort.MaxValue * ((currentStep - halfWaveLength) / halfWaveLength)
                         End If
 
                     Case WaveForms.SawTooth
-                        v = -32768 + 65535 * (currentStep / waveLength)
+                        v = Short.MinValue + UShort.MaxValue * (currentStep / waveLength)
 
                     Case WaveForms.Noise
-                        v = rnd.Next(-32768, 32767)
+                        v = rnd.Next(Short.MinValue, Short.MaxValue)
 
                     Case WaveForms.CustomFormula
-                        'v = (Math.Sin(oscillatorOffset * mFrequency * ToRad) -
-                        '     Math.Cos(oscillatorOffset * mFrequency * 2 * ToRad) ^ 2 +
-                        '     Math.Sin(oscillatorOffset / 2 * mFrequency * ToRad)) * 32768
-
-                        Dim cp As New Dictionary(Of String, Double)
-                        cp.Add("oscillatorOffset", oscillatorOffset)
-                        cp.Add("frequency", mFrequency)
-                        cp.Add("currentStep", currentStep)
-                        cp.Add("waveLength", waveLength)
-                        v = mCustomFormula.Evaluate(cp) * 32768
+                        mCustomFormula.CustomParameters("oscillatorOffset") = oscillatorOffset
+                        mCustomFormula.CustomParameters("frequency") = mFrequency
+                        mCustomFormula.CustomParameters("currentStep") = currentStep
+                        mCustomFormula.CustomParameters("waveLength") = waveLength
+                        v = mCustomFormula.Evaluate() * Short.MaxValue
                 End Select
 
-                oscillatorOffset += 360 / AudioMixer.SampleRate
+                oscillatorOffset += oscStep
             End If
 
             currentStep += 1

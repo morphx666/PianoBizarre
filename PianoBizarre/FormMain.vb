@@ -27,20 +27,19 @@ Public Class FormMain
         Me.SetStyle(ControlStyles.UserPaint, True)
 
         InitKeyboardUI()
+        InitAudioMixer()
+        SetupEventHandlers()
 
-        am = New AudioMixer()
-        For i As Integer = 1 To 6 ' note polyphony
-            ' Simple sinusoidal oscillator
-            'am.BufferProviders.Add(CreateInstrument1())
+        refreshThread = New Thread(Sub()
+                                       Do
+                                           Thread.Sleep(33)
+                                           Me.Invalidate()
+                                       Loop Until abortThreads
+                                   End Sub)
+        refreshThread.Start()
+    End Sub
 
-            ' Multiple oscillators (SignalMixer)
-            am.BufferProviders.Add(CreateInstrument2())
-
-            ' Custom formula
-            'am.BufferProviders.Add(CreateInstrument3())
-        Next
-        am.Volume = 0.8
-
+    Private Sub SetupEventHandlers()
         AddHandler Me.KeyDown, Sub(s1 As Object, e1 As KeyEventArgs)
                                    Dim newNote As String = KeyToNote(e1.KeyCode)
 
@@ -68,14 +67,21 @@ Public Class FormMain
                                      End If
                                  Next
                              End Sub
+    End Sub
 
-        refreshThread = New Thread(Sub()
-                                       Do
-                                           Thread.Sleep(33)
-                                           Me.Invalidate()
-                                       Loop Until abortThreads
-                                   End Sub)
-        refreshThread.Start()
+    Private Sub InitAudioMixer()
+        am = New AudioMixer()
+        For i As Integer = 1 To 6 ' note polyphony
+            ' Simple sinusoidal oscillator
+            'am.BufferProviders.Add(CreateInstrument1())
+
+            ' Multiple oscillators (SignalMixer)
+            am.BufferProviders.Add(CreateInstrument2())
+
+            ' Custom formula
+            'am.BufferProviders.Add(CreateInstrument3())
+        Next
+        am.Volume = 0.8
     End Sub
 
     Private Sub InitKeyboardUI()
