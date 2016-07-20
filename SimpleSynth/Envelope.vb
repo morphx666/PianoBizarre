@@ -134,7 +134,9 @@ Public Class Envelope
                     Case EnvelopeSteps.Release : ep = Release
                 End Select
 
-                mVolume = (ep.Duration - counter) / ep.Duration * lastVolume + counter / ep.Duration * ep.Volume
+                ' Linear interpolation
+                mVolume = (ep.Duration - counter) / ep.Duration * lastVolume +
+                          counter / ep.Duration * ep.Volume
                 If counter >= ep.Duration Then
                     Select Case mEnvStep
                         Case EnvelopeSteps.Attack : EnvelopStep = EnvelopeSteps.Decay

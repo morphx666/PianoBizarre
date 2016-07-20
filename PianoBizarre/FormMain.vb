@@ -14,6 +14,7 @@ Public Class FormMain
     Private largeFont As New Font("Consolas", 13, FontStyle.Bold)
     Private waveFormRendererMode As WaveFormRendererModes = WaveFormRendererModes.Line
     Private keyboardKeys As New List(Of KeyRenderer)
+    Private bufferHistory As New List(Of Integer())
 
     Private Sub FormMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         abortThreads = True
@@ -248,10 +249,13 @@ Public Class FormMain
         Dim x As Integer
 
         Dim bufLen As Integer = am.AudioBuffer.Length
-        Dim buf(bufLen - 1) As Integer
+        'Dim buf(bufLen - 1) As Integer
+        Dim buf = Function(index As Integer) bufferHistory.Average(Function(k) k(index))
 
         SyncLock AudioMixer.SyncObject
-            Array.Copy(am.AudioBuffer, buf, bufLen)
+            If bufferHistory.Count >= 4 Then bufferHistory.RemoveAt(0)
+            bufferHistory.Add(am.AudioBuffer.Clone())
+            'Array.Copy(am.AudioBuffer, buf, bufLen)
         End SyncLock
 
         Select Case waveFormRendererMode
@@ -278,7 +282,7 @@ Public Class FormMain
                     l.X = i / bufLen * r.Width
                     l.Y = (32768 - buf(i) * am.Volume) / 65536 * h + y
                     If buf(i) = 0 Then
-                        l.Height = 2
+                        l.Height = 1
                     ElseIf buf(i) < 0 Then
                         l.Height = Math.Abs(l.Y - m) * 2
                         l.Y -= l.Height
