@@ -85,6 +85,9 @@ Public Class Oscillator
 
         halfWaveLength = waveLength / 2
         oscillatorOffset = 0
+
+        mCustomFormula.CustomParameters("frequency") = mFrequency
+        mCustomFormula.CustomParameters("waveLength") = waveLength
     End Sub
 
     <RangeAttribute(-1.0, 1.0)>
@@ -101,13 +104,12 @@ Public Class Oscillator
         Get
             Dim v As Integer
 
-            If waveLength = 0 Then
+            If mWaveForm = WaveForms.Constant Then
+                v = mConstantValue * Short.MaxValue
+            ElseIf waveLength = 0 Then
                 v = 0
             Else
                 Select Case mWaveForm
-                    Case WaveForms.Constant
-                        v = mConstantValue * Short.MaxValue
-
                     Case WaveForms.Pulse
                         If currentStep <= waveLength * mPulseWidth Then
                             v = Short.MaxValue
@@ -133,10 +135,9 @@ Public Class Oscillator
 
                     Case WaveForms.CustomFormula
                         mCustomFormula.CustomParameters("oscillatorOffset") = oscillatorOffset
-                        mCustomFormula.CustomParameters("frequency") = mFrequency
                         mCustomFormula.CustomParameters("currentStep") = currentStep
-                        mCustomFormula.CustomParameters("waveLength") = waveLength
                         v = mCustomFormula.Evaluate() * Short.MaxValue
+
                 End Select
 
                 oscillatorOffset += oscStep
