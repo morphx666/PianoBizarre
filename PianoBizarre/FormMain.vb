@@ -189,13 +189,16 @@ Public Class FormMain
         sg.Envelop.Release = New Envelope.EnvelopePoint(0, 300)
         sg.Volume = 0.5
 
+        ' ~~~ Organ ~~~
         'sg.Formula = "0.3 * (Sin(ToRad(oscillatorOffset * frequency))
         '                    - Pow(Cos(ToRad(oscillatorOffset * frequency * 2)), 2)
         '                    + Sin(ToRad(oscillatorOffset / 2 * frequency)))"
 
+        ' ~~~ ??? ~~~
         sg.Formula = "Sin(frequency * ToRad(oscillatorOffset)) * 
                         IIf(Sin(oscillatorOffset / 7 + frequency * 4 * ToRad(oscillatorOffset / 2)) > 0, 1, -1)"
 
+        ' ~~~ UFO ~~~
         'sg.Formula = "Osc(10000000 * 1/3) 
         '                * IIf(Osc(10000000 * 1/8) > 0, 1, 0.5) 
         '                * Sin(IIf(Osc(10000000 * 1/8) > 0, 2, 4) 
