@@ -8,6 +8,8 @@ So far, the library supports:
 - Supports Envelopes (Attack, Decay, Sustain and Release)
 - Supports triggering multiple tone/signal generators at once (SignalMixer)
 
+![PianoBizarre](https://whenimbored.xfx.net/wp-content/uploads/2016/07/pianobizarre01.png)
+
 Missing features and functionality that I hope to implement:
 - Support for envelope curves (exponetial, logarithmic, s-curve, etc...)
 - Better audio mixing algorithm (instead of simply clipping it)
