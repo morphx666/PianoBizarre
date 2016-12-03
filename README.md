@@ -13,7 +13,7 @@ So far, the library supports:
 Missing features and functionality that I hope to implement:
 - Support for envelope curves (exponetial, logarithmic, s-curve, etc...)
 - Better audio mixing algorithm (instead of simply clipping it)
-- Stereo support (with panning control)
+- ~~Stereo support (with panning control)~~
 - Automation (ability to control parameters, such as the Volume of a signal generator, through an oscillator)
 - Implement a signal generator that can playback audio files (sampler)
 - MIDI support
