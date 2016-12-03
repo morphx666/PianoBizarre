@@ -35,7 +35,7 @@ Public Class AudioMixer
     Private playbackThread As Thread
     Private cancelAllThreads As Boolean
 
-    Private mVolume As Double = 1
+    Private mVolume As Double = 1.0
     Private mBufferProviders As New List(Of IBufferProvider)
 
     Public Shared ReadOnly Property SyncObject As New Object()
@@ -128,14 +128,14 @@ Public Class AudioMixer
     End Sub
 
     Private Sub Initialize()
-        ReDim mAudioBuffer(SampleRate / 88 - 1)
+        ReDim mAudioBuffer(SampleRate * 2 / 88 - 1)
         ReDim mainBuffer(mAudioBuffer.Length * 2 - 1)
 
         ' Define the capture format
         Dim format As WaveFormat = New WaveFormat()
         With format
             .BitsPerSample = 16
-            .Channels = 1
+            .Channels = 2
             .FormatTag = WaveFormatTag.Pcm
             .SamplesPerSecond = SampleRate
             .BlockAlignment = CShort(.Channels * .BitsPerSample / 8)

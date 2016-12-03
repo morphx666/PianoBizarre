@@ -152,6 +152,7 @@ Public Class FormMain
         sg.Envelop.Sustain = New Envelope.EnvelopePoint(1, 500)
         sg.Envelop.Release = New Envelope.EnvelopePoint(0, 300)
         sg.Volume = 0.35
+        sg.Panning = 0.8
         m.SignalGenerators.Add(sg)
 
         sg = New SignalGenerator()
@@ -165,7 +166,8 @@ Public Class FormMain
         sg.WaveForm = Oscillator.WaveForms.SawTooth
         sg.Envelop.Sustain = New Envelope.EnvelopePoint(1, 800)
         sg.Envelop.Release = New Envelope.EnvelopePoint(0, 600)
-        sg.Volume = 0.3
+        sg.Volume = 0.4
+        sg.Panning = -0.8
         sg.NoteShiftOffset -= 12
         m.SignalGenerators.Add(sg)
 
@@ -251,14 +253,17 @@ Public Class FormMain
         Dim y As Integer = (r.Height - h) / 2
         Dim x As Integer
 
-        Dim bufLen As Integer = am.AudioBuffer.Length
+        Dim bufLen As Integer = am.AudioBuffer.Length / 2
         'Dim buf(bufLen - 1) As Integer
         Dim buf = Function(index As Integer) bufferHistory.Average(Function(k) k(index))
 
         SyncLock AudioMixer.SyncObject
             If bufferHistory.Count >= 4 Then bufferHistory.RemoveAt(0)
-            bufferHistory.Add(am.AudioBuffer.Clone())
-            'Array.Copy(am.AudioBuffer, buf, bufLen)
+            Dim b(am.AudioBuffer.Length / 2 - 1) As Integer
+            For i As Integer = 0 To am.AudioBuffer.Length - 1 Step 2
+                b(i / 2) = (am.AudioBuffer(i) + am.AudioBuffer(i + 1)) / 2
+            Next
+            bufferHistory.Add(b)
         End SyncLock
 
         Select Case waveFormRendererMode

@@ -48,19 +48,25 @@ Public Class SignalGenerator
         Dim v As Integer
         Dim bufferWritePosition As Integer
 
+        Dim leftPannning As Double = If(MyBase.Panning <= 0.0, 1.0, 1.0 - MyBase.Panning)
+        Dim rightPannning As Double = If(MyBase.Panning >= 0.0, 1.0, 1.0 - -MyBase.Panning)
+
         Do
             v = MyBase.Oscillator.Value
             v *= MyBase.Volume
             v *= MyBase.Envelop.Volume
+
             If isFirst Then
-                audioBuffer(bufferWritePosition) = v
+                audioBuffer(bufferWritePosition) = v * leftPannning
+                audioBuffer(bufferWritePosition + 1) = v * rightPannning
             Else
-                audioBuffer(bufferWritePosition) += v
+                audioBuffer(bufferWritePosition) += v * leftPannning
+                audioBuffer(bufferWritePosition + 1) += v * rightPannning
             End If
 
-            If bufferWritePosition = audioBuffer.Length - 1 Then Exit Do
+            If bufferWritePosition = audioBuffer.Length - 2 Then Exit Do
 
-            bufferWritePosition += 1
+            bufferWritePosition += 2
         Loop
     End Sub
 End Class
