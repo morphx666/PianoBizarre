@@ -18,6 +18,7 @@ Missing features and functionality that I hope to implement:
 - Implement a signal generator that can playback audio files (sampler)
 - MIDI support
 - A *real* UI to showcase the library
+- Use NAudio instead of SlimDX
 
 Dependencies:
 - Audio playback requires [SlimDX](https://slimdx.org/).
