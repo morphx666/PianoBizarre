@@ -17,11 +17,7 @@ Public MustInherit Class BufferProvider
     Protected Friend MustOverride Sub FillAudioBuffer(audioBuffer() As Integer, isFirst As Boolean) Implements IBufferProvider.FillAudioBuffer
 
     Public Sub New()
-        AddHandler mEnvelop.EnvelopStepChanged, Sub()
-                                                    If mEnvelop.EnvelopStep = Envelope.EnvelopeSteps.Idle Then
-                                                        Frequency = 0
-                                                    End If
-                                                End Sub
+        AddHandler mEnvelop.EnvelopStepChanged, Sub() If mEnvelop.EnvelopStep = Envelope.EnvelopeSteps.Idle Then Frequency = 0.0
     End Sub
 
     ''' <summary>
@@ -60,7 +56,7 @@ Public MustInherit Class BufferProvider
             Return mVolume
         End Get
         Set(value As Double)
-            mVolume = Math.Min(1, Math.Max(0, value))
+            mVolume = Math.Min(1.0, Math.Max(0.0, value))
         End Set
     End Property
 
@@ -75,7 +71,7 @@ Public MustInherit Class BufferProvider
             Return mPanning
         End Get
         Set(value As Double)
-            mPanning = Math.Min(1, Math.Max(-1, value))
+            mPanning = Math.Min(1.0, Math.Max(-1.0, value))
         End Set
     End Property
 
@@ -103,7 +99,7 @@ Public MustInherit Class BufferProvider
         Set(value As Double)
             mNote.Frequency = value
 
-            If mNote.Frequency = 0 Then
+            If mNote.Frequency = 0.0 Then
                 If mEnvelop.EnvelopStep = Envelope.EnvelopeSteps.Idle Then
                     mOscillator.Frequency = mNote.Frequency
                 Else

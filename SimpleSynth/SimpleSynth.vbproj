@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioMixer.vb" />
+    <Compile Include="Automation.vb" />
     <Compile Include="BufferProvider.vb" />
     <Compile Include="Envelope.vb" />
     <Compile Include="Evaluator.vb" />

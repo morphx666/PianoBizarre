@@ -160,6 +160,12 @@ Public Class FormMain
         sg.Envelop.Attack = New Envelope.EnvelopePoint(1, 300)
         sg.Envelop.Release = New Envelope.EnvelopePoint(0, 400)
         sg.Volume = 0.2
+
+        Dim osc As New Oscillator()
+        osc.WaveForm = Oscillator.WaveForms.Sinusoidal
+        osc.Frequency = 4
+        sg.Automation.Set("Panning", osc)
+
         m.SignalGenerators.Add(sg)
 
         sg = New SignalGenerator()
