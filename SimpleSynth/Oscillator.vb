@@ -101,7 +101,7 @@ Public Class Oscillator
         mCustomFormula.CustomParameters("frequency") = mFrequency
         mCustomFormula.CustomParameters("waveLength") = waveLength
 
-        ReDim ksBuffer(waveLength)
+        ReDim ksBuffer(waveLength - 1)
 
         For i As Integer = 0 To ksBuffer.Length - 1
             ksBuffer(i) = rnd.Next(Short.MinValue, Short.MaxValue)
@@ -163,7 +163,6 @@ Public Class Oscillator
                                 v = ksBuffer(currentStep) * If(currentStep >= waveLength / 2, 1, -1)
                                 ksBuffer(currentStep) = (ksBuffer(If(currentStep = 0, waveLength - 1, currentStep - 1)) + v) / 2
                             Catch ex As Exception
-                                Stop
                             End Try
                         End SyncLock
                 End Select

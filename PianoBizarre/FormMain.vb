@@ -76,14 +76,14 @@ Public Class FormMain
             ' Simple sinusoidal oscillator
             'am.BufferProviders.Add(CreateInstrument1())
 
-            ' Multiple oscillators (SignalMixer)
-            'am.BufferProviders.Add(CreateInstrument2())
+            ' Multiple oscillators, panning and automation (SignalMixer)
+            am.BufferProviders.Add(CreateInstrument2())
 
             ' Custom formula
             'am.BufferProviders.Add(CreateInstrument3())
 
-            ' Karplus-Strong Algorithm
-            am.BufferProviders.Add(CreateInstrument4())
+            ' Karplus-Strong Algorithm (String instrument simulation)
+            'am.BufferProviders.Add(CreateInstrument4())
         Next
         am.Volume = 0.8
     End Sub
@@ -227,11 +227,6 @@ Public Class FormMain
 
         sg.WaveForm = Oscillator.WaveForms.KarplusStrong
         sg.Volume = 1.0
-
-        'sg.Envelop.Attack = New Envelope.EnvelopePoint(1, 10)
-        'sg.Envelop.Decay = New Envelope.EnvelopePoint(0.6, 100)
-        'sg.Envelop.Sustain = New Envelope.EnvelopePoint(0.6, 1)
-        'sg.Envelop.Release = New Envelope.EnvelopePoint(0, 100)
 
         Return sg
     End Function
