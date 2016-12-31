@@ -12,6 +12,7 @@ Public Class Oscillator
         Constant
         Noise
         CustomFormula
+        KarplusStrong
     End Enum
 
     Private mFrequency As Double = 0
@@ -22,6 +23,8 @@ Public Class Oscillator
 
     Private Const ToRad As Double = Math.PI / 180.0
     Private Const oscStep As Double = 360.0 / AudioMixer.SampleRate
+
+    Private ksBuffer() As Integer
 
     Private waveLength As Integer
     Private halfWaveLength As Integer
@@ -76,6 +79,15 @@ Public Class Oscillator
         End Set
     End Property
 
+    Public Property CustomFunctionHandler As Evaluator.CustomFunctionDel
+        Get
+            Return mCustomFormula.CustomFunctionHandler
+        End Get
+        Set(value As Evaluator.CustomFunctionDel)
+            mCustomFormula.CustomFunctionHandler = value
+        End Set
+    End Property
+
     Protected Overridable Sub ParametersChanged()
         If mFrequency > 0 Then
             waveLength = AudioMixer.SampleRate / mFrequency
@@ -88,6 +100,12 @@ Public Class Oscillator
 
         mCustomFormula.CustomParameters("frequency") = mFrequency
         mCustomFormula.CustomParameters("waveLength") = waveLength
+
+        ReDim ksBuffer(waveLength)
+
+        For i As Integer = 0 To ksBuffer.Length - 1
+            ksBuffer(i) = rnd.Next(Short.MinValue, Short.MaxValue)
+        Next
     End Sub
 
     <RangeAttribute(-1.0, 1.0)>
@@ -138,6 +156,16 @@ Public Class Oscillator
                         mCustomFormula.CustomParameters("currentStep") = currentStep
                         v = mCustomFormula.Evaluate() * Short.MaxValue
 
+                    Case WaveForms.KarplusStrong
+                        SyncLock ksBuffer
+                            ' FIXME: Figure out why we get an IndexOutOfRangeException, event when SyncLock'ing on ksBuffer
+                            Try
+                                v = ksBuffer(currentStep) * If(currentStep >= waveLength / 2, 1, -1)
+                                ksBuffer(currentStep) = (ksBuffer(If(currentStep = 0, waveLength - 1, currentStep - 1)) + v) / 2
+                            Catch ex As Exception
+                                Stop
+                            End Try
+                        End SyncLock
                 End Select
 
                 oscillatorOffset += oscStep

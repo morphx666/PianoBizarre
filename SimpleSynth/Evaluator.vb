@@ -44,10 +44,22 @@
 ''' </list> 
 ''' </summary>
 Public Class Evaluator
+    Public Delegate Function CustomFunctionDel(name As String, args As FunctionArgs)
+
     Private mFormula As String
     Private mCustomParameters As New Dictionary(Of String, Double)
+    Private mCustomFunction As CustomFunctionDel
 
     Private exp As Expression
+
+    Public Property CustomFunctionHandler As CustomFunctionDel
+        Get
+            Return mCustomFunction
+        End Get
+        Set(value As CustomFunctionDel)
+            mCustomFunction = value
+        End Set
+    End Property
 
     ''' <summary>
     ''' Gets or sets the formula to be evaluated
@@ -82,6 +94,19 @@ Public Class Evaluator
                                                          args.Result = If(t < f2, t - f4, f2 - t + f4) / f4
                                                      Case "Rnd"
                                                          args.Result = (New Random()).NextDouble()
+                                                     Case Else
+                                                         ' This is a cheap trick to handle arrays
+                                                         ' By default, this parser will interpret an array (such as A(3)) as a function call,
+                                                         ' so before giving up, we check if there's any parameter named A3.
+                                                         ' If such parameter exists, it means that the "user" has defined "A" as an array.
+                                                         Dim arrayName As String = $"{name}{args.Parameters(0).Evaluate()}"
+                                                         If mCustomParameters.ContainsKey(arrayName) Then
+                                                             args.Result = mCustomParameters(arrayName)
+                                                         Else
+                                                             If mCustomFunction IsNot Nothing Then
+                                                                 mCustomFunction(name, args)
+                                                             End If
+                                                         End If
                                                  End Select
                                              End Sub
 

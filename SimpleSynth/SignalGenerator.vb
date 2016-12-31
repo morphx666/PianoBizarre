@@ -47,6 +47,15 @@ Public Class SignalGenerator
         End Set
     End Property
 
+    Public Property CustomFunction As Evaluator.CustomFunctionDel
+        Get
+            Return MyBase.Oscillator.CustomFunctionHandler
+        End Get
+        Set(value As Evaluator.CustomFunctionDel)
+            MyBase.Oscillator.CustomFunctionHandler = value
+        End Set
+    End Property
+
     Public Property Automation As Automation
         Get
             Return mAutomation
@@ -66,6 +75,8 @@ Public Class SignalGenerator
         Do
             mAutomation.Apply()
 
+            ' See: http://folk.ntnu.no/oyvinbra/gdsp/Lesson1Panning.html
+            ' "Delay based panning"
             Select Case MyBase.Panning
                 Case 0
                     leftPannning = 1.0

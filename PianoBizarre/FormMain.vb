@@ -77,10 +77,13 @@ Public Class FormMain
             'am.BufferProviders.Add(CreateInstrument1())
 
             ' Multiple oscillators (SignalMixer)
-            am.BufferProviders.Add(CreateInstrument2())
+            'am.BufferProviders.Add(CreateInstrument2())
 
             ' Custom formula
             'am.BufferProviders.Add(CreateInstrument3())
+
+            ' Karplus-Strong Algorithm
+            am.BufferProviders.Add(CreateInstrument4())
         Next
         am.Volume = 0.8
     End Sub
@@ -198,19 +201,37 @@ Public Class FormMain
         sg.Volume = 0.5
 
         ' ~~~ Organ ~~~
-        'sg.Formula = "0.3 * (Sin(ToRad(oscillatorOffset * frequency))
-        '                    - Pow(Cos(ToRad(oscillatorOffset * frequency * 2)), 2)
-        '                    + Sin(ToRad(oscillatorOffset / 2 * frequency)))"
+        sg.Formula = "0.3 * (Sin(ToRad(oscillatorOffset * frequency))
+                            - Pow(Cos(ToRad(oscillatorOffset * frequency * 2)), 2)
+                            + Sin(ToRad(oscillatorOffset / 2 * frequency)))"
 
         ' ~~~ ??? ~~~
-        sg.Formula = "Sin(frequency * ToRad(oscillatorOffset)) * 
-                        IIf(Sin(oscillatorOffset / 7 + frequency * 4 * ToRad(oscillatorOffset / 2)) > 0, 1, -1)"
+        'sg.Formula = "Sin(frequency * ToRad(oscillatorOffset)) * 
+        '                IIf(Sin(oscillatorOffset / 7 + frequency * 4 * ToRad(oscillatorOffset / 2)) > 0, 1, -1)"
 
         ' ~~~ UFO ~~~
         'sg.Formula = "Osc(10000000 * 1/3) 
         '                * IIf(Osc(10000000 * 1/8) > 0, 1, 0.5) 
         '                * Sin(IIf(Osc(10000000 * 1/8) > 0, 2, 4) 
         '                    * frequency * ToRad(oscillatorOffset))"
+
+        Return sg
+    End Function
+
+    ''' <summary>
+    ''' A Karplus-Strong Algorithm based instrument
+    ''' </summary>
+    ''' <returns><see cref="SignalGenerator"/></returns>
+    Private Function CreateInstrument4() As SignalGenerator
+        Dim sg As New SignalGenerator()
+
+        sg.WaveForm = Oscillator.WaveForms.KarplusStrong
+        sg.Volume = 1.0
+
+        'sg.Envelop.Attack = New Envelope.EnvelopePoint(1, 10)
+        'sg.Envelop.Decay = New Envelope.EnvelopePoint(0.6, 100)
+        'sg.Envelop.Sustain = New Envelope.EnvelopePoint(0.6, 1)
+        'sg.Envelop.Release = New Envelope.EnvelopePoint(0, 100)
 
         Return sg
     End Function
@@ -243,13 +264,14 @@ Public Class FormMain
     Private Sub FormMain_Paint(sender As Object, e As PaintEventArgs) Handles Me.Paint
         Dim g As Graphics = e.Graphics
         Dim r As Rectangle = Me.DisplayRectangle
-        'r.Width -= 1
-        'r.Height -= 1
+
+        g.PixelOffsetMode = Drawing2D.PixelOffsetMode.HighQuality
 
         g.Clear(Color.FromArgb(&HFF, &H13, &H2F, &H30))
 
         keyboardKeys.ForEach(Sub(k)
-                                 k.State = If(am.BufferProviders.Any(Function(bp) bp.Envelop.EnvelopStep <> Envelope.EnvelopeSteps.Release AndAlso bp.Frequency = k.Note.Frequency),
+                                 k.State = If(am.BufferProviders.Any(Function(bp) bp.Envelop.EnvelopStep <> Envelope.EnvelopeSteps.Release AndAlso
+                                                                                  bp.Frequency = k.Note.Frequency),
                                                         KeyRenderer.KeyStates.Pushed,
                                                         KeyRenderer.KeyStates.Released)
                                  k.Render(g)
@@ -260,8 +282,7 @@ Public Class FormMain
         Dim x As Integer
 
         Dim bufLen As Integer = am.AudioBuffer.Length / 2
-        'Dim buf(bufLen - 1) As Integer
-        Dim buf = Function(index As Integer) bufferHistory.Average(Function(k) k(index))
+        Dim bufAvg = Function(index As Integer) bufferHistory.Average(Function(k) k(index))
 
         SyncLock AudioMixer.SyncObject
             If bufferHistory.Count >= 4 Then bufferHistory.RemoveAt(0)
@@ -272,12 +293,16 @@ Public Class FormMain
             bufferHistory.Add(b)
         End SyncLock
 
+        'Using p As New Pen(Color.FromArgb(255, 33, 33, 33))
+        '    g.DrawLine(p, 0, y, r.Width, y)
+        'End Using
+
         Select Case waveFormRendererMode
             Case WaveFormRendererModes.Line
                 Dim p(bufLen - 1) As Point
                 For i As Integer = 0 To bufLen - 1
                     x = i / bufLen * r.Width
-                    p(i) = New Point(x, (32768 - buf(i) * am.Volume) / 65536 * h + y)
+                    p(i) = New Point(x, (32768 - bufAvg(i) * am.Volume) / 65536 * h + y)
                 Next
                 Using pc As New Pen(Color.Black, 5)
                     g.DrawLines(pc, p)
@@ -294,10 +319,10 @@ Public Class FormMain
                 l.Width = 4
                 For i As Integer = 0 To bufLen - 1 Step 4
                     l.X = i / bufLen * r.Width
-                    l.Y = (32768 - buf(i) * am.Volume) / 65536 * h + y
-                    If buf(i) = 0 Then
+                    l.Y = (32768 - bufAvg(i) * am.Volume) / 65536 * h + y
+                    If bufAvg(i) = 0 Then
                         l.Height = 1
-                    ElseIf buf(i) < 0 Then
+                    ElseIf bufAvg(i) < 0 Then
                         l.Height = Math.Abs(l.Y - m) * 2
                         l.Y -= l.Height
                     Else
