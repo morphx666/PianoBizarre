@@ -158,7 +158,7 @@ Public Class Oscillator
 
                     Case WaveForms.KarplusStrong
                         SyncLock ksBuffer
-                            ' FIXME: Figure out why we get an IndexOutOfRangeException, event when SyncLock'ing on ksBuffer
+                            ' FIXME: Figure out why we get an IndexOutOfRangeException, even when SyncLock'ing on ksBuffer
                             Try
                                 v = ksBuffer(currentStep) * If(currentStep >= waveLength / 2, 1, -1)
                                 ksBuffer(currentStep) = (ksBuffer(If(currentStep = 0, waveLength - 1, currentStep - 1)) + v) / 2
