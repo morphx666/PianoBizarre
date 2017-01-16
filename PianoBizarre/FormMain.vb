@@ -74,10 +74,10 @@ Public Class FormMain
         am = New AudioMixer()
         For i As Integer = 1 To 6 ' note polyphony
             ' Simple sinusoidal oscillator
-            am.BufferProviders.Add(CreateInstrument1())
+            'am.BufferProviders.Add(CreateInstrument1())
 
             ' Multiple oscillators, panning and automation (SignalMixer)
-            'am.BufferProviders.Add(CreateInstrument2())
+            am.BufferProviders.Add(CreateInstrument2())
 
             ' Custom formula
             'am.BufferProviders.Add(CreateInstrument3())
