@@ -71,7 +71,7 @@ Public Class FormMain
     End Sub
 
     Private Sub InitAudioMixer()
-        am = New AudioMixer()
+        am = New AudioMixerSlimDX()
         For i As Integer = 1 To 6 ' note polyphony
             ' Simple sinusoidal oscillator
             'am.BufferProviders.Add(CreateInstrument1())
@@ -279,7 +279,7 @@ Public Class FormMain
         Dim bufLen As Integer = am.AudioBuffer.Length / 2
         Dim bufAvg = Function(index As Integer) bufferHistory.Average(Function(k) k(index))
 
-        SyncLock AudioMixer.SyncObject
+        SyncLock AudioMixerSLIMDX.SyncObject
             If bufferHistory.Count >= 4 Then bufferHistory.RemoveAt(0)
             Dim b(am.AudioBuffer.Length / 2 - 1) As Integer
             For i As Integer = 0 To am.AudioBuffer.Length - 1 Step 2

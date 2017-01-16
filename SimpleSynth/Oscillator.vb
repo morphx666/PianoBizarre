@@ -22,7 +22,7 @@ Public Class Oscillator
     Private mCustomFormula As New Evaluator()
 
     Private Const ToRad As Double = Math.PI / 180.0
-    Private Const oscStep As Double = 360.0 / AudioMixer.SampleRate
+    Private Const oscStep As Double = 360.0 / AudioMixerSLIMDX.SampleRate
 
     Private ksBuffer() As Integer
 
@@ -90,7 +90,7 @@ Public Class Oscillator
 
     Protected Overridable Sub ParametersChanged()
         If mFrequency > 0 Then
-            waveLength = AudioMixer.SampleRate / mFrequency
+            waveLength = AudioMixerSLIMDX.SampleRate / mFrequency
         Else
             waveLength = 0
         End If

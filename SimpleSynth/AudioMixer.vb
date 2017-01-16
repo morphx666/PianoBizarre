@@ -1,42 +1,24 @@
-Imports SlimDX.DirectSound
-Imports SlimDX.Multimedia
-Imports System.Runtime.InteropServices
+﻿Imports System.ComponentModel.DataAnnotations
 Imports System.Threading
-Imports System.ComponentModel.DataAnnotations
 
 ''' <summary>
 ''' This is the main component in <see cref="SimpleSynth"/> and it works by evaluating
 ''' a series of <see cref="BufferProvider"/>s, combining their results and
-''' outputting the resulting waveform through a <see cref="DirectSound"/> audio buffer.
+''' outputting the resulting waveform through a <see cref="SlimDX.DirectSound"/> audio buffer.
 ''' </summary>
-Public Class AudioMixer
-    Implements IDisposable
-
-    <DllImport("user32.dll", CharSet:=CharSet.Auto, ExactSpelling:=True)>
-    Private Shared Function GetDesktopWindow() As IntPtr
-    End Function
+Public MustInherit Class AudioMixer
+    Implements IAudioMixer, IDisposable
 
     Public Const SampleRate As Integer = 44100
 
-    Private audioDev As DirectSound
-    Private bufPlayDesc As SoundBufferDescription
-    Private playBuf As SecondarySoundBuffer
-    Private notifySize As Integer
-    Private numberPlaybackNotifications As Integer = 4
-    Private nextPlaybackOffset As Integer
+    Protected mAudioBuffer() As Integer
+    Protected mainBuffer() As Byte
 
-    Private waiter As AutoResetEvent = New AutoResetEvent(False)
+    Protected playbackThread As Thread
+    Protected cancelAllThreads As Boolean
 
-    Private mAudioBuffer() As Integer
-    Private mainBuffer() As Byte
-
-    Private audioWriteBufferPosition As Integer
-
-    Private playbackThread As Thread
-    Private cancelAllThreads As Boolean
-
-    Private mVolume As Double = 1.0
-    Private mBufferProviders As New List(Of IBufferProvider)
+    Protected mVolume As Double = 1.0
+    Protected mBufferProviders As New List(Of IBufferProvider)
 
     Public Shared ReadOnly Property SyncObject As New Object()
 
@@ -48,7 +30,7 @@ Public Class AudioMixer
     ''' 16bit normalized (<see cref="Short.MinValue"/> to <see cref="Short.MaxValue"/>) audio buffer
     ''' </summary>
     ''' <returns>Array of <see cref="Integer"/>s</returns>
-    Public ReadOnly Property AudioBuffer As Integer()
+    Public ReadOnly Property AudioBuffer As Integer() Implements IAudioMixer.AudioBuffer
         Get
             Return mAudioBuffer
         End Get
@@ -58,7 +40,7 @@ Public Class AudioMixer
     ''' List of <see cref="BufferProvider"/>s 
     ''' </summary>
     ''' <returns>A list of <see cref="IBufferProvider"/>s</returns>
-    Public ReadOnly Property BufferProviders As List(Of IBufferProvider)
+    Public ReadOnly Property BufferProviders As List(Of IBufferProvider) Implements IAudioMixer.BufferProviders
         Get
             Return mBufferProviders
         End Get
@@ -69,7 +51,7 @@ Public Class AudioMixer
     ''' </summary>
     ''' <returns><see cref="Double"/></returns>
     <RangeAttribute(0.0, 1.0)>
-    Public Property Volume As Double
+    Public Property Volume As Double Implements IAudioMixer.Volume
         Get
             Return mVolume
         End Get
@@ -78,40 +60,11 @@ Public Class AudioMixer
         End Set
     End Property
 
-    Private Sub MainLoop()
-        Dim i As Integer
-
-        Do
-            waiter.WaitOne()
-
-            SyncLock SyncObject
-                For i = 0 To mBufferProviders.Count - 1
-                    mBufferProviders(i).FillAudioBuffer(mAudioBuffer, i = 0)
-                Next
-            End SyncLock
-
-            ' Hard clipping
-            For i = 0 To mAudioBuffer.Length - 1
-                Array.Copy(BitConverter.GetBytes(CShort(
-                                                 Math.Min(
-                                                    Short.MaxValue,
-                                                    Math.Max(
-                                                        Short.MinValue,
-                                                        mAudioBuffer(i) * mVolume)))),
-                           0,
-                           mainBuffer,
-                           i * 2, 2)
-            Next
-
-            WriteAudioBuffer()
-        Loop Until cancelAllThreads
-    End Sub
-
     ''' <summary>
     ''' Use to gracefully dispose all used resources.
     ''' This member is called by the <see cref="Dispose()"/> method. 
     ''' </summary>
-    Public Sub Close()
+    Public Overridable Sub Close() Implements IAudioMixer.Close
         cancelAllThreads = True
 
         mBufferProviders.ForEach(Sub(bp) bp.Close())
@@ -119,80 +72,9 @@ Public Class AudioMixer
         Do
             Thread.Sleep(10)
         Loop While playbackThread.ThreadState <> ThreadState.Stopped
-
-        playBuf.Stop()
-        waiter.Set()
-
-        playBuf.Dispose()
-        audioDev.Dispose()
     End Sub
 
-    Private Sub Initialize()
-        ReDim mAudioBuffer(SampleRate * 2 / 88 - 1)
-        ReDim mainBuffer(mAudioBuffer.Length * 2 - 1)
-
-        ' Define the capture format
-        Dim format As WaveFormat = New WaveFormat()
-        With format
-            .BitsPerSample = 16
-            .Channels = 2
-            .FormatTag = WaveFormatTag.Pcm
-            .SamplesPerSecond = SampleRate
-            .BlockAlignment = CShort(.Channels * .BitsPerSample / 8)
-            .AverageBytesPerSecond = .SamplesPerSecond * .BlockAlignment
-        End With
-
-        ' Define the size of the notification chunks
-        notifySize = mainBuffer.Length
-        notifySize -= notifySize Mod format.BlockAlignment
-
-        ' Create a buffer description object
-        bufPlayDesc = New SoundBufferDescription()
-        With bufPlayDesc
-            .Format = format
-            .Flags = BufferFlags.ControlPositionNotify Or
-                     BufferFlags.GetCurrentPosition2 Or
-                     BufferFlags.GlobalFocus Or
-                     BufferFlags.Static
-            .SizeInBytes = notifySize * numberPlaybackNotifications
-        End With
-
-        audioDev = New DirectSound()
-        audioDev.SetCooperativeLevel(GetDesktopWindow(), CooperativeLevel.Normal)
-        playBuf = New SecondarySoundBuffer(audioDev, bufPlayDesc)
-
-        ' Define the notification events
-        Dim np(numberPlaybackNotifications - 1) As NotificationPosition
-
-        For i As Integer = 0 To numberPlaybackNotifications - 1
-            np(i) = New NotificationPosition()
-            np(i).Offset = (notifySize * i) + notifySize - 1
-            np(i).Event = waiter
-        Next
-        playBuf.SetNotificationPositions(np)
-
-        nextPlaybackOffset = 0
-        playBuf.Play(0, PlayFlags.Looping)
-
-        playbackThread = New Thread(AddressOf MainLoop)
-        playbackThread.Start()
-    End Sub
-
-    Private Sub WriteAudioBuffer()
-        Dim lockSize As Integer
-
-        lockSize = playBuf.CurrentWritePosition - nextPlaybackOffset
-        If lockSize < 0 Then lockSize += bufPlayDesc.SizeInBytes
-
-        ' Block align lock size so that we always read on a boundary
-        lockSize -= lockSize Mod notifySize
-        If lockSize = 0 Then Exit Sub
-
-        playBuf.Write(Of Byte)(mainBuffer, nextPlaybackOffset, LockFlags.None)
-
-        nextPlaybackOffset += mainBuffer.Length
-        nextPlaybackOffset = nextPlaybackOffset Mod bufPlayDesc.SizeInBytes ' Circular buffer
-    End Sub
+    Protected MustOverride Sub Initialize()
 
 #Region "IDisposable Support"
     Private disposedValue As Boolean ' To detect redundant calls

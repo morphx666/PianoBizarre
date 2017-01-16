@@ -45,6 +45,10 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NAudio, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.8.0\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
       <HintPath>..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
       <Private>True</Private>
@@ -75,10 +79,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioMixer.vb" />
+    <Compile Include="AudioMixerNAudio.vb" />
+    <Compile Include="AudioMixerSlimDX.vb" />
     <Compile Include="Automation.vb" />
     <Compile Include="BufferProvider.vb" />
     <Compile Include="Envelope.vb" />
     <Compile Include="Evaluator.vb" />
+    <Compile Include="IAudioMixer.vb" />
     <Compile Include="IBufferProvider.vb" />
     <Compile Include="Note.vb" />
     <Compile Include="SignalMixer.vb" />
