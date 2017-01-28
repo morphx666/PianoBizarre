@@ -72,6 +72,7 @@ Public Class FormMain
 
     Private Sub InitAudioMixer()
         am = New AudioMixerSlimDX()
+        'am = New AudioMixerNAudio()
         For i As Integer = 1 To 6 ' note polyphony
             ' Simple sinusoidal oscillator
             'am.BufferProviders.Add(CreateInstrument1())

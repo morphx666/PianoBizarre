@@ -6,8 +6,8 @@ Imports NAudio.Wave
 Public Class AudioMixerNAudio
     Inherits AudioMixer
 
-    Private wo As New WaveOut()
-    Private bwp As New BufferedWaveProvider(New WaveFormat(SampleRate, 2))
+    Private wo As WaveOut
+    Private bwp As BufferedWaveProvider
 
     Private Sub MainLoop()
         Dim i As Integer
@@ -43,6 +43,9 @@ Public Class AudioMixerNAudio
         n = n - (n Mod 2)
         ReDim mAudioBuffer(n - 1)
         ReDim mainBuffer(mAudioBuffer.Length * 2 - 1)
+
+        wo = New WaveOut()
+        bwp = New BufferedWaveProvider(New WaveFormat(SampleRate, 2))
 
         bwp.DiscardOnBufferOverflow = True
         bwp.BufferLength = mainBuffer.Length * 4
