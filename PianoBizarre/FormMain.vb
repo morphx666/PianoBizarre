@@ -27,6 +27,8 @@ Public Class FormMain
         Me.SetStyle(ControlStyles.ResizeRedraw, True)
         Me.SetStyle(ControlStyles.UserPaint, True)
 
+        'Dim midi As New MidiParser("D:\Users\Xavier\Desktop\La Roux - In For The Kill.mid")
+
         InitKeyboardUI()
         InitAudioMixer()
         SetupEventHandlers()
@@ -150,42 +152,47 @@ Public Class FormMain
         Dim sg As SignalGenerator
         Dim m As New SignalMixer()
 
-        sg = New SignalGenerator()
-        sg.WaveForm = Oscillator.WaveForms.Pulse
-        sg.PulseWidth = 0.3
+        sg = New SignalGenerator() With {
+            .WaveForm = Oscillator.WaveForms.Pulse,
+            .PulseWidth = 0.3,
+            .Volume = 0.35,
+            .Panning = 0.8
+        }
         sg.Envelop.Sustain = New Envelope.EnvelopePoint(1, 500)
         sg.Envelop.Release = New Envelope.EnvelopePoint(0, 300)
-        sg.Volume = 0.35
-        sg.Panning = 0.8
         m.SignalGenerators.Add(sg)
 
-        sg = New SignalGenerator()
-        sg.WaveForm = Oscillator.WaveForms.Sinusoidal
+        sg = New SignalGenerator() With {
+            .Volume = 0.2,
+            .WaveForm = Oscillator.WaveForms.Sinusoidal
+        }
         sg.Envelop.Attack = New Envelope.EnvelopePoint(1, 300)
         sg.Envelop.Release = New Envelope.EnvelopePoint(0, 400)
-        sg.Volume = 0.2
 
-        Dim osc As New Oscillator()
-        osc.WaveForm = Oscillator.WaveForms.Sinusoidal
-        osc.Frequency = 4
+        Dim osc As New Oscillator() With {
+            .WaveForm = Oscillator.WaveForms.Sinusoidal,
+            .Frequency = 4
+        }
         sg.Automation.Set("Panning", osc)
 
         m.SignalGenerators.Add(sg)
 
-        sg = New SignalGenerator()
+        sg = New SignalGenerator() With {
+            .Volume = 0.4,
+            .Panning = -0.8
+        }
+        sg.NoteShiftOffset -= 12
         sg.WaveForm = Oscillator.WaveForms.SawTooth
         sg.Envelop.Sustain = New Envelope.EnvelopePoint(1, 800)
         sg.Envelop.Release = New Envelope.EnvelopePoint(0, 600)
-        sg.Volume = 0.4
-        sg.Panning = -0.8
-        sg.NoteShiftOffset -= 12
         m.SignalGenerators.Add(sg)
 
-        sg = New SignalGenerator()
-        sg.WaveForm = Oscillator.WaveForms.Noise
+        sg = New SignalGenerator() With {
+            .WaveForm = Oscillator.WaveForms.Noise,
+            .Volume = 0.04
+        }
         sg.Envelop.Sustain = New Envelope.EnvelopePoint(1, 500)
         sg.Envelop.Release = New Envelope.EnvelopePoint(0, 400)
-        sg.Volume = 0.04
         m.SignalGenerators.Add(sg)
         Return m
     End Function

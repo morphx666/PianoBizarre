@@ -87,6 +87,7 @@
     <Compile Include="Evaluator.vb" />
     <Compile Include="IAudioMixer.vb" />
     <Compile Include="IBufferProvider.vb" />
+    <Compile Include="MidiParser.vb" />
     <Compile Include="Note.vb" />
     <Compile Include="SignalMixer.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

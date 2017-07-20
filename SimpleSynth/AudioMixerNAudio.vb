@@ -45,10 +45,10 @@ Public Class AudioMixerNAudio
         ReDim mainBuffer(mAudioBuffer.Length * 2 - 1)
 
         wo = New WaveOut()
-        bwp = New BufferedWaveProvider(New WaveFormat(SampleRate, 2))
-
-        bwp.DiscardOnBufferOverflow = True
-        bwp.BufferLength = mainBuffer.Length * 4
+        bwp = New BufferedWaveProvider(New WaveFormat(SampleRate, 2)) With {
+            .DiscardOnBufferOverflow = True,
+            .BufferLength = mainBuffer.Length * 4
+        }
 
         wo.Init(bwp)
         wo.Play()
