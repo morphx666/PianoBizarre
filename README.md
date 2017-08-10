@@ -16,7 +16,7 @@ Missing features and functionality that I hope to implement:
 - ~~Stereo support (with panning control)~~
 - ~~Automation (ability to control parameters, such as the Volume of a signal generator, through an oscillator)~~
 - Implement a signal generator that can playback audio files (sampler)
-- MIDI support
+- MIDI support ([Work in progress](https://github.com/morphx666/PianoBizarre/blob/master/SimpleSynth/MidiParser.vb))
 - A *real* UI to showcase the library
 - Use NAudio instead of SlimDX
 
