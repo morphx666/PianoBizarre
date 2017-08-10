@@ -18,7 +18,7 @@ Missing features and functionality that I hope to implement:
 - Implement a signal generator that can playback audio files (sampler)
 - MIDI support ([Work in progress](https://github.com/morphx666/PianoBizarre/blob/master/SimpleSynth/MidiParser.vb))
 - A *real* UI to showcase the library
-- Use NAudio instead of SlimDX ([Work in progress](https://github.com/morphx666/PianoBizarre/blob/master/SimpleSynth/AudioMixerNAudio.vb))
+- Use [NAudio](https://github.com/naudio/NAudio) instead of SlimDX ([Work in progress](https://github.com/morphx666/PianoBizarre/blob/master/SimpleSynth/AudioMixerNAudio.vb))
 
 Dependencies:
 - Audio playback requires [SlimDX](https://slimdx.org/).
