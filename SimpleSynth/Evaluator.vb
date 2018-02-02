@@ -51,6 +51,7 @@ Public Class Evaluator
     Private mCustomFunction As CustomFunctionDel
 
     Private exp As Expression
+    Private rnd As New Random()
 
     Public Property CustomFunctionHandler As CustomFunctionDel
         Get
@@ -93,7 +94,7 @@ Public Class Evaluator
                                                          Dim t As Double = Now.Ticks Mod f
                                                          args.Result = If(t < f2, t - f4, f2 - t + f4) / f4
                                                      Case "Rnd"
-                                                         args.Result = (New Random()).NextDouble()
+                                                         args.Result = rnd.NextDouble()
                                                      Case Else
                                                          ' This is a cheap trick to handle arrays
                                                          ' By default, this parser will interpret an array (such as A(3)) as a function call,

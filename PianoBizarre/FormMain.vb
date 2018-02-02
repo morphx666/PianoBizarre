@@ -27,7 +27,7 @@ Public Class FormMain
         Me.SetStyle(ControlStyles.ResizeRedraw, True)
         Me.SetStyle(ControlStyles.UserPaint, True)
 
-        'Dim midi As New MidiParser("D:\Users\Xavier\Desktop\La Roux - In For The Kill.mid")
+        'Dim midi As New MidiParser("La Roux - In For The Kill.mid")
 
         InitKeyboardUI()
         InitAudioMixer()
@@ -40,6 +40,24 @@ Public Class FormMain
                                        Loop Until abortThreads
                                    End Sub)
         refreshThread.Start()
+
+        'For Each bp In am.BufferProviders
+        '    bp.Envelop.Attack.Duration = 0
+        '    bp.Envelop.Release.Duration = 2
+        'Next
+        ''"BB DB BB CE GD BB"
+        'Dim x As String = "A A CA A ABD F CAA" '.Reverse().ToArray()
+        'For i As Integer = 0 To x.Length - 1
+        '    For Each bp In am.BufferProviders
+        '        If x(i) <> " " Then bp.Note = $"{x(i)} 4"
+        '        Debug.Write(x(i))
+        '        Thread.Sleep(100)
+        '        bp.Frequency = 0
+        '        Thread.Sleep(180)
+        '        Exit For
+        '    Next
+        '    Debug.WriteLine("")
+        'Next
     End Sub
 
     Private Sub SetupEventHandlers()
@@ -287,7 +305,7 @@ Public Class FormMain
         Dim bufLen As Integer = am.AudioBuffer.Length / 2
         Dim bufAvg = Function(index As Integer) bufferHistory.Average(Function(k) k(index))
 
-        SyncLock AudioMixerSLIMDX.SyncObject
+        SyncLock AudioMixerSlimDX.SyncObject
             If bufferHistory.Count >= 4 Then bufferHistory.RemoveAt(0)
             Dim b(am.AudioBuffer.Length / 2 - 1) As Integer
             For i As Integer = 0 To am.AudioBuffer.Length - 1 Step 2
