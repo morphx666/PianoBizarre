@@ -22,4 +22,4 @@ Missing features and functionality that I hope to implement:
 
 Dependencies:
 - Audio playback requires [SlimDX](https://slimdx.org/).
-- Evaluation of custom formulas requires the [NCalc](https://github.com/sheetsync/NCalc) library.
+- Evaluation of custom formulas uses the [NCalc](https://github.com/sheetsync/NCalc) library.
