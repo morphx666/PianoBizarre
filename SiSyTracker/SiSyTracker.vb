@@ -88,7 +88,7 @@ Public Class Tracker
                     sw.Restart()
 
                     If lastPatternIndex <> patternIndex Then
-                        noteInterval = 60000.0 / (Patterns(patternIndex).BPM * Patterns(patternIndex).BeatResolution)
+                        noteInterval = 60000.0 / ((Patterns(patternIndex).BPM * Patterns(patternIndex).BeatResolution) / 2.0)
                         lastPatternIndex = patternIndex
                     End If
 

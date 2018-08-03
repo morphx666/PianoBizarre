@@ -7,7 +7,7 @@ Public Class FormMain
         Dim c As Channel
 
         With t.Patterns.Last()
-            .BPM = 50
+            .BPM = 110
             '                       1   2   3   4
             .BeatResolution = 8   ' 0 1 2 3 4 5 6 7 8
 
@@ -154,11 +154,14 @@ Public Class FormMain
             With c.Notes
                 .Add(New TrackerNote(c, "A 3", 200, 0))
             End With
+
+            ' TODO: Test ReQuantization
+            .BeatResolution = 16
         End With
 
-        'For Each p In t.Patterns
-        '    If p.Channels.Count > 1 Then p.Channels.RemoveAt(1)
-        'Next
+        For Each p In t.Patterns
+            'If p.Channels.Count > 1 Then p.Channels.RemoveAt(1)
+        Next
 
         t.Play(True)
     End Sub

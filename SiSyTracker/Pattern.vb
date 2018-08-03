@@ -52,13 +52,23 @@ Public Class Pattern
             Return mBeatResolution
         End Get
         Set(value As Integer)
-            ' TODO: Re-adjust Notes' timing
+            ' ReQuantize
+            ReQuantize(mBeatResolution, value)
             mBeatResolution = value
         End Set
     End Property
 
     Public Sub Close()
         Dispose()
+    End Sub
+
+    Private Sub ReQuantize(oldValue As Integer, newValue As Integer)
+        Dim factor As Double = newValue / oldValue
+        For Each c As Channel In Channels
+            For i As Integer = 0 To c.Notes.Count - 1
+                c.Notes(i).Slot *= factor
+            Next
+        Next
     End Sub
 
 #Region "IDisposable Support"

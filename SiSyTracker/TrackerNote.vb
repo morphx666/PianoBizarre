@@ -11,7 +11,7 @@ Public Class TrackerNote
     <Range(0, 1, ErrorMessage:="Value for {0} must be between {1} and {2}.")>
     Public Property Volume As Double
 
-    Public Property Slot As Integer
+    Private mSlot As Integer
 
     Public ReadOnly Property Channel As Channel
 
@@ -21,14 +21,18 @@ Public Class TrackerNote
         Me.Note = note
         Me.Duration = duration
 
-        'If slot < 0 OrElse slot >= Me.Channel.Pattern.BeatResolution Then
-        'Throw New ArgumentException($"Slot {slot} could not be fit into a pattern with a resolution of {Me.Channel.Pattern.BeatResolution}")
-        'Else
         If Me.Channel.Notes.Any(Function(n As TrackerNote) n.Slot = slot) Then Throw New ArgumentException($"Slot {slot} already in use")
-        'End If
-
         Me.Slot = slot
     End Sub
+
+    Public Property Slot As Integer
+        Get
+            Return mSlot
+        End Get
+        Set(value As Integer)
+            mSlot = value
+        End Set
+    End Property
 
     Public Sub Play(channel As Channel)
         Task.Run(Sub()
