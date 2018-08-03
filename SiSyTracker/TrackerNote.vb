@@ -21,11 +21,11 @@ Public Class TrackerNote
         Me.Note = note
         Me.Duration = duration
 
-        If slot <> -1 Then
-            If Me.Channel.Notes.Any(Function(n As TrackerNote) n.Slot = slot) Then Throw New ArgumentException($"Slot {slot} already in use")
-        ElseIf slot < 0 OrElse slot > Me.Channel.Pattern.BeatResolution Then
-            Throw New ArgumentException($"Slot {slot} could not be fit into a pattern with a resolution of {Me.Channel.Pattern.BeatResolution}")
-        End If
+        'If slot < 0 OrElse slot >= Me.Channel.Pattern.BeatResolution Then
+        'Throw New ArgumentException($"Slot {slot} could not be fit into a pattern with a resolution of {Me.Channel.Pattern.BeatResolution}")
+        'Else
+        If Me.Channel.Notes.Any(Function(n As TrackerNote) n.Slot = slot) Then Throw New ArgumentException($"Slot {slot} already in use")
+        'End If
 
         Me.Slot = slot
     End Sub

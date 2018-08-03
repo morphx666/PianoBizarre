@@ -40,6 +40,13 @@ Public Class Pattern
         Channels.Add(New Channel(Me))
     End Sub
 
+    Public Sub New(inheritFrom As Pattern)
+        Me.New()
+
+        BPM = inheritFrom.BPM
+        mBeatResolution = inheritFrom.BeatResolution
+    End Sub
+
     Public Property BeatResolution As Integer
         Get
             Return mBeatResolution

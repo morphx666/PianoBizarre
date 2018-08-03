@@ -102,7 +102,7 @@ Public Class Tracker
                     Next
 
                     noteIndex += 1
-                    If noteIndex > Patterns(patternIndex).BeatResolution Then
+                    If noteIndex >= Patterns(patternIndex).BeatResolution Then
                         noteIndex = 0
                         patternIndex += 1
                         If patternIndex = Patterns.Count Then
