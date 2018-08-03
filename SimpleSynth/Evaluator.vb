@@ -94,7 +94,16 @@ Public Class Evaluator
                                                          Dim t As Double = Now.Ticks Mod f
                                                          args.Result = If(t < f2, t - f4, f2 - t + f4) / f4
                                                      Case "Rnd"
-                                                         args.Result = rnd.NextDouble()
+                                                         If args.Parameters.Count = 1 Then
+                                                             Dim v As Double = args.Parameters(0).Evaluate()
+                                                             If Not Double.IsInfinity(v) Then
+                                                                 args.Result = rnd.Next(v)
+                                                             Else
+                                                                 args.Result = 0
+                                                             End If
+                                                         Else
+                                                             args.Result = rnd.NextDouble() - 0.5
+                                                         End If
                                                      Case Else
                                                          ' This is a cheap trick to handle arrays
                                                          ' By default, this parser will interpret an array (such as A(3)) as a function call,

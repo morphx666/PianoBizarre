@@ -98,13 +98,16 @@ Public Class FormMain
             'am.BufferProviders.Add(CreateInstrument1())
 
             ' Multiple oscillators, panning and automation (SignalMixer)
-            am.BufferProviders.Add(CreateInstrument2())
+            'am.BufferProviders.Add(CreateInstrument2())
 
             ' Custom formula
-            'am.BufferProviders.Add(CreateInstrument3())
+            am.BufferProviders.Add(CreateInstrument3())
 
             ' Karplus-Strong Algorithm (String instrument simulation)
             'am.BufferProviders.Add(CreateInstrument4())
+
+            ' Noise
+            'am.BufferProviders.Add(CreateInstrument5())
         Next
         am.Volume = 0.8
     End Sub
@@ -227,9 +230,9 @@ Public Class FormMain
         sg.Volume = 0.5
 
         ' ~~~ Organ ~~~
-        sg.Formula = "0.3 * (Sin(ToRad(oscillatorOffset * frequency))
-                            - Pow(Cos(ToRad(oscillatorOffset * frequency * 2)), 2)
-                            + Sin(ToRad(oscillatorOffset / 2 * frequency)))"
+        'sg.Formula = "0.3 * (Sin(ToRad(oscillatorOffset * frequency))
+        '                    - Pow(Cos(ToRad(oscillatorOffset * frequency * 2)), 2)
+        '                    + Sin(ToRad(oscillatorOffset / 2 * frequency)))"
 
         ' ~~~ ??? ~~~
         'sg.Formula = "Sin(frequency * ToRad(oscillatorOffset)) * 
@@ -240,6 +243,11 @@ Public Class FormMain
         '                * IIf(Osc(10000000 * 1/8) > 0, 1, 0.5) 
         '                * Sin(IIf(Osc(10000000 * 1/8) > 0, 2, 4) 
         '                    * frequency * ToRad(oscillatorOffset))"
+
+        ' ~~~ Electronic Organ ~~~
+        sg.Formula = "0.000015 * IIf(currentStep <= halfWaveLength,
+                        -32768 + 65535 * Rnd((currentStep / halfWaveLength)),
+                         32767 - 65535 * Rnd(((currentStep - halfWaveLength) / halfWaveLength)))"
 
         Return sg
     End Function
@@ -253,6 +261,20 @@ Public Class FormMain
 
         sg.WaveForm = Oscillator.WaveForms.KarplusStrong
         sg.Volume = 1.0
+
+        Return sg
+    End Function
+
+    Private Function CreateInstrument5() As SignalGenerator
+        Dim sg As New SignalGenerator()
+
+        sg.Envelop.Attack = New Envelope.EnvelopePoint(1, 0)
+        sg.Envelop.Decay = New Envelope.EnvelopePoint(1, 10)
+        sg.Envelop.Sustain = New Envelope.EnvelopePoint(1, Integer.MaxValue)
+        sg.Envelop.Release = New Envelope.EnvelopePoint(0, 0)
+
+        sg.Volume = 0.3
+        sg.WaveForm = Oscillator.WaveForms.Noise
 
         Return sg
     End Function

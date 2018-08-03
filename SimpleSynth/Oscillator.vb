@@ -37,6 +37,7 @@ Public Class Oscillator
         mCustomFormula.CustomParameters.Add("frequency", mFrequency)
         mCustomFormula.CustomParameters.Add("currentStep", currentStep)
         mCustomFormula.CustomParameters.Add("waveLength", waveLength)
+        mCustomFormula.CustomParameters.Add("halfWaveLength", halfWaveLength)
     End Sub
 
     <RangeAttribute(0.0, Double.MaxValue)>
@@ -100,6 +101,7 @@ Public Class Oscillator
 
         mCustomFormula.CustomParameters("frequency") = mFrequency
         mCustomFormula.CustomParameters("waveLength") = waveLength
+        mCustomFormula.CustomParameters("halfWaveLength") = halfWaveLength
 
         ReDim ksBuffer(waveLength - 1)
 

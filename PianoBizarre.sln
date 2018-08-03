@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "PianoBizarre", "PianoBizarre\PianoBizarre.vbproj", "{8CFD99C1-159D-4020-8523-7A1C5BB7975F}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SimpleSynth", "SimpleSynth\SimpleSynth.vbproj", "{F5C049C3-D270-45CF-B09B-559DBC507A6E}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SiSyTracker", "SiSyTracker\SiSyTracker.vbproj", "{879CE03B-901D-4C91-9539-91D87C3C24DE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tracker", "Tracker", "{0D0EC1D4-810E-403E-A5C3-EA738B27A064}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SiSyTrackerTester", "SiSyTrackerTester\SiSyTrackerTester.vbproj", "{7C70E53D-5E9F-4596-B681-BCE6CD7316F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +27,23 @@ Global
 		{F5C049C3-D270-45CF-B09B-559DBC507A6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5C049C3-D270-45CF-B09B-559DBC507A6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5C049C3-D270-45CF-B09B-559DBC507A6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{879CE03B-901D-4C91-9539-91D87C3C24DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{879CE03B-901D-4C91-9539-91D87C3C24DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{879CE03B-901D-4C91-9539-91D87C3C24DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{879CE03B-901D-4C91-9539-91D87C3C24DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C70E53D-5E9F-4596-B681-BCE6CD7316F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C70E53D-5E9F-4596-B681-BCE6CD7316F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C70E53D-5E9F-4596-B681-BCE6CD7316F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C70E53D-5E9F-4596-B681-BCE6CD7316F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{879CE03B-901D-4C91-9539-91D87C3C24DE} = {0D0EC1D4-810E-403E-A5C3-EA738B27A064}
+		{7C70E53D-5E9F-4596-B681-BCE6CD7316F8} = {0D0EC1D4-810E-403E-A5C3-EA738B27A064}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A007896C-8324-4BFA-8332-2F91C96E47FA}
 	EndGlobalSection
 EndGlobal
