@@ -7,7 +7,7 @@ Public Class FormMain
         Dim c As Channel
 
         With t.Patterns.Last()
-            .BPM = 110
+            .BPM = 120
             '                       1   2   3   4
             .BeatResolution = 8   ' 0 1 2 3 4 5 6 7 8
 
@@ -154,12 +154,22 @@ Public Class FormMain
             With c.Notes
                 .Add(New TrackerNote(c, "A 3", 200, 0))
             End With
-
-            ' TODO: Test ReQuantization
-            .BeatResolution = 16
         End With
 
         For Each p In t.Patterns
+            p.Volume = 0.3
+            For Each c In p.Channels
+                c.Instrument.WaveForm = SimpleSynth.Oscillator.WaveForms.CustomFormula
+                c.Instrument.Formula = "0.000015 * IIf(currentStep <= halfWaveLength," +
+                                        "- 32768 + 65535 * Rnd((currentStep / halfWaveLength))," +
+                                        "  32767 - 65535 * Rnd(((currentStep - halfWaveLength) / halfWaveLength)))"
+                c.Instrument.Volume = 0.3
+            Next
+
+            ' Remove right hand
+            'If p.Channels.Count > 0 Then p.Channels.RemoveAt(0)
+
+            ' Remove left hand
             'If p.Channels.Count > 1 Then p.Channels.RemoveAt(1)
         Next
 

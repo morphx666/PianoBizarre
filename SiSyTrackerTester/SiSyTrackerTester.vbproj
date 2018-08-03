@@ -23,6 +23,7 @@
     <OutputPath>..\Release\</OutputPath>
     <DocumentationFile>SiSyTrackerTester.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -119,6 +120,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SimpleSynth\SimpleSynth.vbproj">
+      <Project>{f5c049c3-d270-45cf-b09b-559dbc507a6e}</Project>
+      <Name>SimpleSynth</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SiSyTracker\SiSyTracker.vbproj">
       <Project>{879ce03b-901d-4c91-9539-91d87c3c24de}</Project>
       <Name>SiSyTracker</Name>

@@ -58,6 +58,15 @@ Public Class Pattern
         End Set
     End Property
 
+    Public Property Volume As Double
+        Get
+            Return am.Volume
+        End Get
+        Set(value As Double)
+            am.Volume = value
+        End Set
+    End Property
+
     Public Sub Close()
         Dispose()
     End Sub
