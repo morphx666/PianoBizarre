@@ -327,7 +327,7 @@ Public Class FormMain
         Dim bufLen As Integer = am.AudioBuffer.Length / 2
         Dim bufAvg = Function(index As Integer) bufferHistory.Average(Function(k) k(index))
 
-        SyncLock AudioMixerSlimDX.SyncObject
+        SyncLock AudioMixer.SyncObject
             If bufferHistory.Count >= 4 Then bufferHistory.RemoveAt(0)
             Dim b(am.AudioBuffer.Length / 2 - 1) As Integer
             For i As Integer = 0 To am.AudioBuffer.Length - 1 Step 2

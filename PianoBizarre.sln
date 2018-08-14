@@ -8,6 +8,9 @@ EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SimpleSynth", "SimpleSynth\SimpleSynth.vbproj", "{F5C049C3-D270-45CF-B09B-559DBC507A6E}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SiSyTracker", "SiSyTracker\SiSyTracker.vbproj", "{879CE03B-901D-4C91-9539-91D87C3C24DE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F5C049C3-D270-45CF-B09B-559DBC507A6E} = {F5C049C3-D270-45CF-B09B-559DBC507A6E}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tracker", "Tracker", "{0D0EC1D4-810E-403E-A5C3-EA738B27A064}"
 EndProject

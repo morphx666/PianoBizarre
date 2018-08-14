@@ -14,6 +14,7 @@ Public Class Pattern
 
     Public Sub New()
         am = New AudioMixerSlimDX()
+        'am = New AudioMixerNAudio()
 
         BPM = 128
         mBeatResolution = 8 ' Time Signature: 4/4

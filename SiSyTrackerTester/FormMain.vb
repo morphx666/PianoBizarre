@@ -24,8 +24,8 @@ Public Class FormMain
             .Channels.Add(New Channel(t.Patterns.First()))
             c = .Channels.Last()
             With c.Notes
-                .Add(New TrackerNote(c, "E 3", 200, 0))
-                .Add(New TrackerNote(c, "E 3", 200, 4))
+                .Add(New TrackerNote(c, "E 3", 300, 0))
+                .Add(New TrackerNote(c, "E 3", 300, 4))
             End With
         End With
 
@@ -44,8 +44,8 @@ Public Class FormMain
             .Channels.Add(New Channel(t.Patterns.First()))
             c = .Channels.Last()
             With c.Notes
-                .Add(New TrackerNote(c, "A 3", 200, 3))
-                .Add(New TrackerNote(c, "A 3", 200, 4))
+                .Add(New TrackerNote(c, "A 3", 300, 3))
+                .Add(New TrackerNote(c, "A 3", 300, 4))
             End With
         End With
 
@@ -62,8 +62,8 @@ Public Class FormMain
             .Channels.Add(New Channel(t.Patterns.First()))
             c = .Channels.Last()
             With c.Notes
-                .Add(New TrackerNote(c, "G#3", 200, 0))
-                .Add(New TrackerNote(c, "E 3", 200, 4))
+                .Add(New TrackerNote(c, "G#3", 300, 0))
+                .Add(New TrackerNote(c, "E 3", 300, 4))
             End With
         End With
 
@@ -79,7 +79,7 @@ Public Class FormMain
             .Channels.Add(New Channel(t.Patterns.First()))
             c = .Channels.Last()
             With c.Notes
-                .Add(New TrackerNote(c, "A 3", 200, 0))
+                .Add(New TrackerNote(c, "A 3", 400, 0))
             End With
         End With
 
@@ -97,8 +97,8 @@ Public Class FormMain
             .Channels.Add(New Channel(t.Patterns.First()))
             c = .Channels.Last()
             With c.Notes
-                .Add(New TrackerNote(c, "D 3", 200, 0))
-                .Add(New TrackerNote(c, "D 3", 200, 4))
+                .Add(New TrackerNote(c, "D 3", 300, 0))
+                .Add(New TrackerNote(c, "D 3", 300, 4))
             End With
         End With
 
@@ -116,8 +116,8 @@ Public Class FormMain
             .Channels.Add(New Channel(t.Patterns.First()))
             c = .Channels.Last()
             With c.Notes
-                .Add(New TrackerNote(c, "C 3", 200, 0))
-                .Add(New TrackerNote(c, "C 3", 200, 4))
+                .Add(New TrackerNote(c, "C 3", 300, 0))
+                .Add(New TrackerNote(c, "C 3", 300, 4))
             End With
         End With
 
@@ -135,8 +135,8 @@ Public Class FormMain
             .Channels.Add(New Channel(t.Patterns.First()))
             c = .Channels.Last()
             With c.Notes
-                .Add(New TrackerNote(c, "E 3", 200, 0))
-                .Add(New TrackerNote(c, "E 3", 200, 4))
+                .Add(New TrackerNote(c, "E 3", 300, 0))
+                .Add(New TrackerNote(c, "E 3", 300, 4))
             End With
         End With
 
@@ -152,7 +152,7 @@ Public Class FormMain
             .Channels.Add(New Channel(t.Patterns.First()))
             c = .Channels.Last()
             With c.Notes
-                .Add(New TrackerNote(c, "A 3", 200, 0))
+                .Add(New TrackerNote(c, "A 3", 400, 0))
             End With
         End With
 

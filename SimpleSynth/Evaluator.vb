@@ -96,7 +96,7 @@ Public Class Evaluator
                                                      Case "Rnd"
                                                          If args.Parameters.Count = 1 Then
                                                              Dim v As Double = args.Parameters(0).Evaluate()
-                                                             If Not Double.IsInfinity(v) Then
+                                                             If Not Double.IsInfinity(v) AndAlso Not Double.IsNaN(v) Then
                                                                  args.Result = rnd.Next(v)
                                                              Else
                                                                  args.Result = 0
