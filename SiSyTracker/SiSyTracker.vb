@@ -14,7 +14,6 @@ Public Class Tracker
     Public ReadOnly Property Patterns As New List(Of Pattern)
 
     Private mState As States
-    Private playerThread As Thread
     Private abortThreads As Boolean
 
     Private patternIndex As Integer
@@ -26,8 +25,7 @@ Public Class Tracker
         mState = States.Stopped
         Patterns.Add(New Pattern())
 
-        playerThread = New Thread(AddressOf Player)
-        playerThread.Start()
+        Task.Run(AddressOf Player)
     End Sub
 
     Public Sub New(name As String)

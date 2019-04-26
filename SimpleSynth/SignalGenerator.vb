@@ -101,9 +101,8 @@ Public Class SignalGenerator
                 audioBuffer(bufferWritePosition + 1) += v * rightPannning
             End If
 
-            If bufferWritePosition = audioBuffer.Length - 2 Then Exit Do
-
             bufferWritePosition += 2
+            If bufferWritePosition >= audioBuffer.Length - 2 Then Exit Do
         Loop
     End Sub
 End Class

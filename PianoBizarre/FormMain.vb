@@ -2,7 +2,6 @@
 Imports SimpleSynth
 
 Public Class FormMain
-    Private refreshThread As Thread
     Private abortThreads As Boolean
     Private am As AudioMixer
 
@@ -29,17 +28,16 @@ Public Class FormMain
 
         'Dim midi As New MidiParser("La Roux - In For The Kill.mid")
 
+        Task.Run(Sub()
+                     Do
+                         Thread.Sleep(33)
+                         Me.Invalidate()
+                     Loop Until abortThreads
+                 End Sub)
+
         InitKeyboardUI()
         InitAudioMixer()
         SetupEventHandlers()
-
-        refreshThread = New Thread(Sub()
-                                       Do
-                                           Thread.Sleep(33)
-                                           Me.Invalidate()
-                                       Loop Until abortThreads
-                                   End Sub)
-        refreshThread.Start()
 
         'For Each bp In am.BufferProviders
         '    bp.Envelop.Attack.Duration = 0
@@ -91,17 +89,17 @@ Public Class FormMain
     End Sub
 
     Private Sub InitAudioMixer()
-        am = New AudioMixerSlimDX()
-        'am = New AudioMixerNAudio()
+        'am = New AudioMixerSlimDX()
+        am = New AudioMixerNAudio()
         For i As Integer = 1 To 6 ' note polyphony
             ' Simple sinusoidal oscillator
             'am.BufferProviders.Add(CreateInstrument1())
 
             ' Multiple oscillators, panning and automation (SignalMixer)
-            'am.BufferProviders.Add(CreateInstrument2())
+            am.BufferProviders.Add(CreateInstrument2())
 
             ' Custom formula
-            am.BufferProviders.Add(CreateInstrument3())
+            'am.BufferProviders.Add(CreateInstrument3())
 
             ' Karplus-Strong Algorithm (String instrument simulation)
             'am.BufferProviders.Add(CreateInstrument4())
@@ -330,7 +328,7 @@ Public Class FormMain
         SyncLock AudioMixer.SyncObject
             If bufferHistory.Count >= 4 Then bufferHistory.RemoveAt(0)
             Dim b(am.AudioBuffer.Length / 2 - 1) As Integer
-            For i As Integer = 0 To am.AudioBuffer.Length - 1 Step 2
+            For i As Integer = 0 To am.AudioBuffer.Length - 2 Step 2
                 b(i / 2) = (am.AudioBuffer(i) + am.AudioBuffer(i + 1)) / 2
             Next
             bufferHistory.Add(b)

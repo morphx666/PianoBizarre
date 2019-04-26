@@ -13,8 +13,8 @@ Public Class Pattern
     Public ReadOnly Property Channels As New ObservableCollection(Of Channel)
 
     Public Sub New()
-        am = New AudioMixerSlimDX()
-        'am = New AudioMixerNAudio()
+        'am = New AudioMixerSlimDX()
+        am = New AudioMixerNAudio()
 
         BPM = 128
         mBeatResolution = 8 ' Time Signature: 4/4

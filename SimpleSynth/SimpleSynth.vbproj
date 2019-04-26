@@ -10,7 +10,7 @@
     <AssemblyName>SimpleSynth</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -21,7 +21,7 @@
     <OutputPath>..\Release\</OutputPath>
     <DocumentationFile>SimpleSynth.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -32,7 +32,7 @@
     <OutputPath>..\Release\</OutputPath>
     <DocumentationFile>SimpleSynth.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -54,10 +54,6 @@
     <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
       <HintPath>..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="SlimDX, Version=4.0.13.43, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\SlimDX SDK (January 2012)\Bin\net40\x86\SlimDX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -82,7 +78,6 @@
   <ItemGroup>
     <Compile Include="AudioMixer.vb" />
     <Compile Include="AudioMixerNAudio.vb" />
-    <Compile Include="AudioMixerSlimDX.vb" />
     <Compile Include="Automation.vb" />
     <Compile Include="BufferProvider.vb" />
     <Compile Include="Envelope.vb" />

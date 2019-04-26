@@ -35,10 +35,12 @@ Public Class TrackerNote
     End Property
 
     Public Sub Play(channel As Channel)
-        Task.Run(Sub()
-                     channel.Instrument.Frequency = Note.Frequency
-                     Thread.Sleep(Duration)
-                     channel.Instrument.Frequency = 0
-                 End Sub)
+        ' FIXME: There has to be a better way!
+        Dim t As New Thread(Sub()
+                                channel.Instrument.Frequency = Note.Frequency
+                                Thread.Sleep(Duration)
+                                channel.Instrument.Frequency = 0
+                            End Sub)
+        t.Start()
     End Sub
 End Class

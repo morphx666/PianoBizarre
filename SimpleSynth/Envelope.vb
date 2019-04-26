@@ -45,7 +45,6 @@ Public Class Envelope
 
     Private lastVolume As Double
     Private mEnvStep As EnvelopeSteps
-    Private mainThread As Thread
     Private counter As Integer
     Private abortThreads As Boolean
 
@@ -64,8 +63,7 @@ Public Class Envelope
         Me.Sustain = New EnvelopePoint(1, Integer.MaxValue)
         Me.Release = New EnvelopePoint(0, 1)
 
-        mainThread = New Thread(AddressOf MainLoop)
-        mainThread.Start()
+        Task.Run(AddressOf MainLoop)
     End Sub
 
     Public Sub New(attack As EnvelopePoint, decay As EnvelopePoint, sustain As EnvelopePoint, release As EnvelopePoint)

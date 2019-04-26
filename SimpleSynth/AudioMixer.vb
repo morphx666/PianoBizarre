@@ -12,9 +12,7 @@ Public MustInherit Class AudioMixer
     Public Const SampleRate As Integer = 44100
 
     Protected mAudioBuffer() As Integer
-    Protected mainBuffer() As Byte
 
-    Protected playbackThread As Thread
     Protected cancelAllThreads As Boolean
 
     Protected mVolume As Double = 1.0
@@ -68,10 +66,6 @@ Public MustInherit Class AudioMixer
         cancelAllThreads = True
 
         mBufferProviders.ForEach(Sub(bp) bp.Close())
-
-        Do
-            Thread.Sleep(10)
-        Loop While playbackThread.ThreadState <> ThreadState.Stopped
     End Sub
 
     Protected MustOverride Sub Initialize()
