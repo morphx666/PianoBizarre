@@ -122,6 +122,8 @@ Public MustInherit Class BufferProvider
         End Get
         Set(value As Note)
             mNote = value
+            mEnvelop.Reset()
+            mOscillator.Reset()
             Frequency = mNote.Frequency
         End Set
     End Property

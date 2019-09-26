@@ -118,6 +118,10 @@ Public Class Envelope
         EnvelopStep = EnvelopeSteps.Release
     End Sub
 
+    Public Sub Reset()
+        sw.Restart()
+    End Sub
+
     Private Sub MainLoop()
         Dim ep As New EnvelopePoint(0, 0)
         Dim lastEp As EnvelopeSteps = EnvelopeSteps.Idle

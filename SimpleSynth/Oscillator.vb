@@ -119,6 +119,10 @@ Public Class Oscillator
         End Set
     End Property
 
+    Public Sub Reset()
+        currentStep = 0
+    End Sub
+
     Public ReadOnly Property Value() As Integer
         Get
             Dim v As Integer
