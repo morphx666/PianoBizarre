@@ -66,7 +66,7 @@ Public Class Note
             If ss = "#" Then n += 1
             n += no * 12 - 9
 
-            Return 2 ^ ((n - 49) / 12.0) * 440.0
+            Return (2 ^ ((n - 49) / 12.0)) * 440.0
         Catch
             Return 0
         End Try

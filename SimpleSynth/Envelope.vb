@@ -45,8 +45,9 @@ Public Class Envelope
 
     Private lastVolume As Double
     Private mEnvStep As EnvelopeSteps
-    Private counter As Integer
     Private abortThreads As Boolean
+
+    Private sw As New Stopwatch()
 
     ''' <summary>
     ''' This event is triggered when a new <see cref="EnvelopePoint"/> is applied. 
@@ -95,7 +96,7 @@ Public Class Envelope
         End Get
         Protected Set(value As EnvelopeSteps)
             mEnvStep = value
-            counter = 0
+            sw.Restart()
             lastVolume = Volume
 
             RaiseEvent EnvelopStepChanged(Me, New EventArgs())
@@ -121,12 +122,12 @@ Public Class Envelope
         Dim ep As New EnvelopePoint(0, 0)
         Dim lastEp As EnvelopeSteps = EnvelopeSteps.Idle
 
+        sw.Start()
+
         Do
             Thread.Sleep(1)
 
             If mEnvStep <> EnvelopeSteps.Idle Then
-                counter += 1
-
                 If mEnvStep <> lastEp Then
                     Select Case mEnvStep
                         Case EnvelopeSteps.Attack : ep = Attack
@@ -137,17 +138,18 @@ Public Class Envelope
                     lastEp = mEnvStep
                 End If
 
-                If counter > ep.Duration Then
+                If sw.ElapsedMilliseconds > ep.Duration Then
                     Select Case mEnvStep
                         Case EnvelopeSteps.Attack : EnvelopStep = EnvelopeSteps.Decay
                         Case EnvelopeSteps.Decay : EnvelopStep = EnvelopeSteps.Sustain
                         Case EnvelopeSteps.Sustain : EnvelopStep = EnvelopeSteps.Release
                         Case EnvelopeSteps.Release : EnvelopStep = EnvelopeSteps.Idle
                     End Select
+                    sw.Restart()
                 Else
                     ' Linear interpolation
-                    mVolume = (ep.Duration - counter) / ep.Duration * lastVolume +
-                              counter / ep.Duration * ep.Volume
+                    mVolume = (ep.Duration - sw.ElapsedMilliseconds) / ep.Duration * lastVolume +
+                              sw.ElapsedMilliseconds / ep.Duration * ep.Volume
                 End If
             End If
         Loop Until abortThreads

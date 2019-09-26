@@ -255,10 +255,10 @@ Public Class FormMain
     ''' </summary>
     ''' <returns><see cref="SignalGenerator"/></returns>
     Private Function CreateInstrument4() As SignalGenerator
-        Dim sg As New SignalGenerator()
-
-        sg.WaveForm = Oscillator.WaveForms.KarplusStrong
-        sg.Volume = 1.0
+        Dim sg As New SignalGenerator With {
+            .WaveForm = Oscillator.WaveForms.KarplusStrong,
+            .Volume = 1.0
+        }
 
         Return sg
     End Function
