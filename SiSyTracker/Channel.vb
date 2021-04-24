@@ -5,6 +5,8 @@ Public Class Channel
     Public ReadOnly Property Notes As New List(Of TrackerNote)
     Public ReadOnly Property Pattern As Pattern
 
+    Public Property Name As String
+
     Public Sub New(pattern As Pattern)
         Me.Pattern = pattern
 

@@ -9,7 +9,7 @@ Public Class TrackerNote
     Public Property Duration As Integer
 
     <Range(0, 1, ErrorMessage:="Value for {0} must be between {1} and {2}.")>
-    Public Property Volume As Double
+    Public Property Volume As Double = 0.0
 
     Private mSlot As Integer
 
@@ -23,6 +23,9 @@ Public Class TrackerNote
 
         If Me.Channel.Notes.Any(Function(n As TrackerNote) n.Slot = slot) Then Throw New ArgumentException($"Slot {slot} already in use")
         Me.Slot = slot
+        Me.Volume = Me.Channel.Instrument.Volume
+
+        NotePlayer()
     End Sub
 
     Public Property Slot As Integer
@@ -34,13 +37,21 @@ Public Class TrackerNote
         End Set
     End Property
 
-    Public Sub Play(channel As Channel)
-        ' FIXME: There has to be a better way!
-        Dim t As New Thread(Sub()
-                                channel.Instrument.Frequency = Note.Frequency
-                                Thread.Sleep(Duration)
-                                channel.Instrument.Frequency = 0
-                            End Sub)
-        t.Start()
+    Dim are As New AutoResetEvent(False)
+    Public Sub Play()
+        are.Set()
+    End Sub
+
+    Private Sub NotePlayer()
+        Task.Run(Sub()
+                     Do
+                         are.WaitOne()
+
+                         Me.Channel.Instrument.Frequency = Note.Frequency
+                         Thread.Sleep(Duration)
+                         Me.Channel.Instrument.Frequency = 0
+                         Me.Channel.Instrument.Envelop.Reset()
+                     Loop
+                 End Sub)
     End Sub
 End Class

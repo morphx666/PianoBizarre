@@ -1,7 +1,8 @@
-﻿Imports SiSyTracker
+﻿Imports SimpleSynth
+Imports SiSyTracker
 
 Public Class FormMain
-    Private t As New Tracker()
+    Private ReadOnly t As New Tracker(New AudioMixerNAudio())
 
     Private Sub FormMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Dim c As Channel
@@ -12,7 +13,8 @@ Public Class FormMain
             .BeatResolution = 8   ' 0 1 2 3 4 5 6 7 8
 
             c = .Channels.Last()
-            With .Channels.Last().Notes
+            c.Name = "P1R"
+            With c.Notes
                 .Add(New TrackerNote(c, "E 5", 200, 0))
                 .Add(New TrackerNote(c, "B 4", 200, 2))
                 .Add(New TrackerNote(c, "C 5", 200, 3))
@@ -23,6 +25,7 @@ Public Class FormMain
 
             .Channels.Add(New Channel(t.Patterns.First()))
             c = .Channels.Last()
+            c.Name = "P1L"
             With c.Notes
                 .Add(New TrackerNote(c, "E 3", 300, 0))
                 .Add(New TrackerNote(c, "E 3", 300, 4))
@@ -166,11 +169,11 @@ Public Class FormMain
                 c.Instrument.Volume = 0.3
             Next
 
-            ' Remove right hand
-            'If p.Channels.Count > 0 Then p.Channels.RemoveAt(0)
-
-            ' Remove left hand
+            ' Remove left hand (bass)
             'If p.Channels.Count > 1 Then p.Channels.RemoveAt(1)
+
+            ' Remove right hand (melody)
+            'If p.Channels.Count > 0 Then p.Channels.RemoveAt(0)
         Next
 
         t.Play(True)

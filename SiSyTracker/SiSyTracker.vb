@@ -1,4 +1,5 @@
 ﻿Imports System.Threading
+Imports SimpleSynth
 
 Public Class Tracker
     Implements IDisposable
@@ -17,13 +18,15 @@ Public Class Tracker
     Private abortThreads As Boolean
 
     Private patternIndex As Integer
-    Private noteIndex As Integer
+    Private slotIndex As Integer
     Private noteInterval As Integer
 
-    Public Sub New()
+    Protected Friend Shared AudioMixerBackEnd As AudioMixerNAudio
+
+    Public Sub New(am As AudioMixer)
         Name = "<Untitled>"
         mState = States.Stopped
-        Patterns.Add(New Pattern())
+        Patterns.Add(New Pattern(am))
 
         Task.Run(AddressOf Player)
     End Sub
@@ -79,7 +82,7 @@ Public Class Tracker
                     Thread.Sleep(100)
                 Case States.Stopped
                     patternIndex = 0
-                    noteIndex = 0
+                    slotIndex = 0
                     lastPatternIndex = -1
                     Thread.Sleep(100)
                 Case States.Playing, States.Looping
@@ -92,16 +95,22 @@ Public Class Tracker
 
                     For Each c As Channel In Patterns(patternIndex).Channels
                         For Each n As TrackerNote In c.Notes
-                            If n.Slot = noteIndex Then
-                                n.Play(c)
+                            If n.Slot = slotIndex Then
+                                n.Play()
                                 Exit For
                             End If
                         Next
                     Next
 
-                    noteIndex += 1
-                    If noteIndex >= Patterns(patternIndex).BeatResolution Then
-                        noteIndex = 0
+                    slotIndex += 1
+                    If slotIndex >= Patterns(patternIndex).BeatResolution Then
+                        slotIndex = 0
+
+                        'For Each c As Channel In Patterns(patternIndex).Channels
+                        '    c.Instrument.Frequency = 0
+                        '    c.Instrument.Envelop.Reset()
+                        'Next
+
                         patternIndex += 1
                         If patternIndex = Patterns.Count Then
                             If mState = States.Playing Then

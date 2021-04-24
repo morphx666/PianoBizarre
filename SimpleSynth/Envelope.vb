@@ -47,7 +47,8 @@ Public Class Envelope
     Private mEnvStep As EnvelopeSteps
     Private abortThreads As Boolean
 
-    Private sw As New Stopwatch()
+    Private startTicks As Long
+    Private Const tickToMs As Long = 10000
 
     ''' <summary>
     ''' This event is triggered when a new <see cref="EnvelopePoint"/> is applied. 
@@ -96,8 +97,8 @@ Public Class Envelope
         End Get
         Protected Set(value As EnvelopeSteps)
             mEnvStep = value
-            sw.Restart()
-            lastVolume = Volume
+            lastVolume = mVolume
+            Reset()
 
             RaiseEvent EnvelopStepChanged(Me, New EventArgs())
         End Set
@@ -119,19 +120,21 @@ Public Class Envelope
     End Sub
 
     Public Sub Reset()
-        sw.Restart()
+        startTicks = Now.Ticks
     End Sub
 
     Private Sub MainLoop()
         Dim ep As New EnvelopePoint(0, 0)
         Dim lastEp As EnvelopeSteps = EnvelopeSteps.Idle
 
-        sw.Start()
-
         Do
-            Thread.Sleep(1)
+            Thread.Sleep(2)
 
-            If mEnvStep <> EnvelopeSteps.Idle Then
+            If mEnvStep = EnvelopeSteps.Idle Then
+                mVolume = lastVolume
+            Else
+                Dim elapsedMs As Long = (Now.Ticks - startTicks) / tickToMs
+
                 If mEnvStep <> lastEp Then
                     Select Case mEnvStep
                         Case EnvelopeSteps.Attack : ep = Attack
@@ -142,18 +145,18 @@ Public Class Envelope
                     lastEp = mEnvStep
                 End If
 
-                If sw.ElapsedMilliseconds > ep.Duration Then
+                If elapsedMs >= ep.Duration Then
                     Select Case mEnvStep
                         Case EnvelopeSteps.Attack : EnvelopStep = EnvelopeSteps.Decay
                         Case EnvelopeSteps.Decay : EnvelopStep = EnvelopeSteps.Sustain
                         Case EnvelopeSteps.Sustain : EnvelopStep = EnvelopeSteps.Release
                         Case EnvelopeSteps.Release : EnvelopStep = EnvelopeSteps.Idle
                     End Select
-                    sw.Restart()
+                    Reset()
                 Else
                     ' Linear interpolation
-                    mVolume = (ep.Duration - sw.ElapsedMilliseconds) / ep.Duration * lastVolume +
-                              sw.ElapsedMilliseconds / ep.Duration * ep.Volume
+                    mVolume = (ep.Duration - elapsedMs) / ep.Duration * lastVolume +
+                              (elapsedMs / ep.Duration) * ep.Volume
                 End If
             End If
         Loop Until abortThreads

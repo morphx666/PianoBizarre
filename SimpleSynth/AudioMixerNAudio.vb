@@ -1,6 +1,3 @@
-Imports System.Runtime.InteropServices
-Imports System.Threading
-Imports System.ComponentModel.DataAnnotations
 Imports NAudio.Wave
 
 Public Class AudioMixerNAudio
@@ -8,6 +5,9 @@ Public Class AudioMixerNAudio
 
     Private wo As WaveOut
     Private bwp As CustomBufferProvider
+
+    Public Sub New()
+    End Sub
 
     Protected Overrides Sub Initialize()
         wo = New WaveOut() With {
@@ -23,7 +23,7 @@ Public Class AudioMixerNAudio
     End Sub
 
     Private Sub FillAudioBuffer(buffer() As Byte)
-        If buffer.Length <> mAudioBuffer.Length Then ReDim mAudioBuffer(buffer.Length \ 2 - 1)
+        If buffer.Length <> mAudioBuffer.Length * 2 Then ReDim mAudioBuffer(buffer.Length \ 2 - 1)
         For i = 0 To mBufferProviders.Count - 1
             mBufferProviders(i).FillAudioBuffer(mAudioBuffer, i = 0)
         Next
