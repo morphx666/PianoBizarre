@@ -1,4 +1,5 @@
-﻿Imports System.Reflection
+﻿Imports System
+Imports System.Reflection
 Imports System.Runtime.InteropServices
 
 ' General Information about an assembly is controlled through the following
@@ -30,5 +31,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")>
 
-<Assembly: AssemblyVersion("2021.4.24.244")>
-<Assembly: AssemblyFileVersion("2021.4.24.244")>
+<Assembly: AssemblyVersion("2021.4.24.106")>
+<Assembly: AssemblyFileVersion("2021.4.24.106")>

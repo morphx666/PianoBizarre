@@ -5,18 +5,16 @@ Imports SimpleSynth
 Public Class Pattern
     Implements IDisposable
 
-    Protected Friend ReadOnly AudioMixerBackEnd As AudioMixer
+    Private am As AudioMixer
 
     Private mBeatResolution As Integer
 
     Public Property BPM As Integer
     Public ReadOnly Property Channels As New ObservableCollection(Of Channel)
 
-    Public Sub New(audioMixer As AudioMixerNAudio)
+    Public Sub New()
         'am = New AudioMixerSlimDX()
-        'am = New AudioMixerNAudio()
-
-        AudioMixerBackEnd = audioMixer
+        am = New AudioMixerNAudio()
 
         BPM = 128
         mBeatResolution = 8 ' Time Signature: 4/4
@@ -25,18 +23,18 @@ Public Class Pattern
                                                    Select Case e.Action
                                                        Case NotifyCollectionChangedAction.Add
                                                            For Each item As Object In e.NewItems
-                                                               AudioMixerBackEnd.BufferProviders.Add(CType(item, Channel).Instrument)
+                                                               am.BufferProviders.Add(CType(item, Channel).Instrument)
                                                            Next
                                                        Case NotifyCollectionChangedAction.Remove
                                                            Dim instrument As SignalGenerator
                                                            For Each item As Object In e.OldItems
                                                                instrument = CType(item, Channel).Instrument
                                                                instrument.Close()
-                                                               AudioMixerBackEnd.BufferProviders.Remove(instrument)
+                                                               am.BufferProviders.Remove(instrument)
                                                            Next
                                                        Case NotifyCollectionChangedAction.Reset
-                                                           AudioMixerBackEnd.BufferProviders.ForEach(Sub(instrument As SignalGenerator) instrument.Close())
-                                                           AudioMixerBackEnd.BufferProviders.Clear()
+                                                           am.BufferProviders.ForEach(Sub(instrument As SignalGenerator) instrument.Close())
+                                                           am.BufferProviders.Clear()
                                                    End Select
                                                End Sub
 
@@ -44,7 +42,7 @@ Public Class Pattern
     End Sub
 
     Public Sub New(inheritFrom As Pattern)
-        Me.New(inheritFrom.AudioMixerBackEnd)
+        Me.New()
 
         BPM = inheritFrom.BPM
         mBeatResolution = inheritFrom.BeatResolution
@@ -63,10 +61,10 @@ Public Class Pattern
 
     Public Property Volume As Double
         Get
-            Return AudioMixerBackEnd.Volume
+            Return am.Volume
         End Get
         Set(value As Double)
-            AudioMixerBackEnd.Volume = value
+            am.Volume = value
         End Set
     End Property
 
@@ -91,7 +89,7 @@ Public Class Pattern
         If Not disposedValue Then
             If disposing Then
                 ' TODO: dispose managed state (managed objects).
-                AudioMixerBackEnd.Close()
+                am.Close()
             End If
 
             ' TODO: free unmanaged resources (unmanaged objects) and override Finalize() below.

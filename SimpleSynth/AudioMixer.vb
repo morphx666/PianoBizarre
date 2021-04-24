@@ -1,4 +1,5 @@
 ﻿Imports System.ComponentModel.DataAnnotations
+Imports System.Threading
 
 ''' <summary>
 ''' This is the main component in <see cref="SimpleSynth"/> and it works by evaluating

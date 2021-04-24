@@ -126,14 +126,16 @@ Public Class Envelope
     Private Sub MainLoop()
         Dim ep As New EnvelopePoint(0, 0)
         Dim lastEp As EnvelopeSteps = EnvelopeSteps.Idle
+        Dim elapsedMs As Long
 
         Do
-            Thread.Sleep(2)
+            Thread.Sleep(1)
 
             If mEnvStep = EnvelopeSteps.Idle Then
-                mVolume = lastVolume
+
+
             Else
-                Dim elapsedMs As Long = (Now.Ticks - startTicks) / tickToMs
+                elapsedMs = (Now.Ticks - startTicks) / tickToMs
 
                 If mEnvStep <> lastEp Then
                     Select Case mEnvStep
@@ -142,8 +144,14 @@ Public Class Envelope
                         Case EnvelopeSteps.Sustain : ep = Sustain
                         Case EnvelopeSteps.Release : ep = Release
                     End Select
+                    If lastEp = EnvelopeSteps.Idle Then elapsedMs = 0
                     lastEp = mEnvStep
+                    Reset()
                 End If
+
+                ' Linear interpolation
+                mVolume = Math.Min(1, (ep.Duration - elapsedMs) / ep.Duration * lastVolume +
+                                       elapsedMs / ep.Duration * ep.Volume)
 
                 If elapsedMs >= ep.Duration Then
                     Select Case mEnvStep
@@ -152,11 +160,6 @@ Public Class Envelope
                         Case EnvelopeSteps.Sustain : EnvelopStep = EnvelopeSteps.Release
                         Case EnvelopeSteps.Release : EnvelopStep = EnvelopeSteps.Idle
                     End Select
-                    Reset()
-                Else
-                    ' Linear interpolation
-                    mVolume = (ep.Duration - elapsedMs) / ep.Duration * lastVolume +
-                              (elapsedMs / ep.Duration) * ep.Volume
                 End If
             End If
         Loop Until abortThreads
